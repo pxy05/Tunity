@@ -16,8 +16,11 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@fontsource/michroma": "^5.2.7",
     "@tailwindcss/vite": "^4.1.13",
-    "vue": "^3.5.18"
+    "unplugin-vue-router": "^0.15.0",
+    "vue": "^3.5.18",
+    "vue-router": "^4.5.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.13",

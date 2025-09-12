@@ -1,13 +1,31 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import '@fontsource/michroma'
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
+import DefaultLayout from './layouts/DefaultLayout.vue'
+import AuthLayout from './layouts/AuthLayout.vue'
 
-<template >
-  <div class="bg-red-500 flex flex-col items-center justify-center">
-  <h1 class="flex-1">You did it!</h1>
-  <p class="flex-1">
-    Visit <a href="https://vuejs.org/" target="_blank" rel="noopener">vuejs.org</a> to read the
-    documentation
-  </p>
+// Main app component
+const route = useRoute()
+
+// Define layout mapping based on route
+const layout = computed(() => {
+  const routeName = route.name as string
+
+  // Auth pages use AuthLayout
+  if (routeName === 'login' || routeName === 'register') {
+    return AuthLayout
+  }
+
+  // All other pages use DefaultLayout
+  return DefaultLayout
+})
+</script>
+
+<template>
+  <div id="app">
+    <component :is="layout">
+      <router-view />
+    </component>
   </div>
 </template>
-
-<style scoped></style>
