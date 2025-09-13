@@ -13,7 +13,7 @@ const layout = computed(() => {
   const routeName = route.name as string
 
   // Auth pages use AuthLayout
-  if (routeName === 'login' || routeName === 'register') {
+  if (routeName === 'account.login' || routeName === 'account.register') {
     return AuthLayout
   }
 

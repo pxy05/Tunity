@@ -18,7 +18,7 @@
 
       <!-- Auth Content -->
       <main class="mb-8">
-        <div class="glass-card p-8 animate-float">
+        <div class="">
           <router-view />
         </div>
       </main>
