@@ -1,5 +1,9 @@
 <script setup lang="ts">
 // Home page component
+definePageMeta({
+  layout: 'default'
+})
+
 </script>
 
 const routerLinkClass = "glass-card font-bold text-3xl flex-1 ml-4 text-left p-4 hover-expand";
