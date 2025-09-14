@@ -6,7 +6,7 @@ definePageMeta({
 </script>
 
 <template>
-  <div class="text-center glass rounded-xl p-8 max-w-[50%] mx-auto">
+  <div class="font-michroma text-center glass rounded-xl p-8 max-w-[50%] mx-auto">
     <h2 class="text-white text-2xl font-bold mb-6 drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]">
       Sign In
     </h2>

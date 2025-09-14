@@ -1,6 +1,68 @@
 @import 'tailwindcss';
 @import '@fontsource/michroma';
 
+/* Helvetica Font Faces */
+@font-face {
+  font-family: 'Helvetica';
+  src: url('/helvetica/Helvetica.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Helvetica';
+  src: url('/helvetica/Helvetica-Bold.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Helvetica';
+  src: url('/helvetica/Helvetica-Oblique.ttf') format('truetype');
+  font-weight: normal;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Helvetica';
+  src: url('/helvetica/Helvetica-BoldOblique.ttf') format('truetype');
+  font-weight: bold;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Helvetica Light';
+  src: url('/helvetica/helvetica-light-587ebe5a59211.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Helvetica Compressed';
+  src: url('/helvetica/helvetica-compressed-5871d14b6903a.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Helvetica Rounded';
+  src: url('/helvetica/helvetica-rounded-bold-5871d05ead8de.otf') format('opentype');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@theme {
+  --font-helvetica: 'Helvetica', sans-serif;
+  --font-michroma: 'Michroma', sans-serif;
+}
+
 /* Global Glass Aesthetic Styles */
 
 /* Fixed Background - sits behind everything */
@@ -19,7 +81,7 @@ body {
   min-height: 100vh;
   height: 100vh;
   width: 100vw;
-  font-family: 'Michroma', sans-serif;
+  font-family: 'Helvetica', sans-serif;
 }
 
 /* Animations */

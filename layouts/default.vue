@@ -6,7 +6,7 @@ import '~/assets/css/main.css'
 <template>
   <div class="h-screen w-screen flex flex-col">
     <!-- Header -->
-    <header class="glass-header py-4 sticky top-0 z-50">
+    <header class="font-michroma glass-header py-4 sticky top-0 z-50">
       <nav class="px-4 flex flex-row items-center">
         <NuxtLink to="/" class="flex-1 ml-[12%] text-white text-2xl font-bold justify-start"
           >Tunity</NuxtLink
