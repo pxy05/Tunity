@@ -8,7 +8,10 @@ import '~/assets/css/main.css'
     <!-- Header -->
     <header class="font-michroma glass-header py-4 sticky top-0 z-50">
       <nav class="px-4 flex flex-row items-center">
-        <NuxtLink to="/" class="flex-1 ml-[12%] text-white text-2xl font-bold justify-start"
+        <NuxtLink
+          to="/"
+          class="mr-[30%] flex-1 text-center text-white text-2xl font-bold transition-transform duration-200 hover:scale-110"
+        >
           >Tunity</NuxtLink
         >
         <div class="flex mr-[12%] flex-1 gap-4 justify-end">
