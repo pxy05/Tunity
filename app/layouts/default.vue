@@ -1,7 +1,9 @@
 <script setup lang="ts">
 // Default layout component
 import "~/assets/css/main.css";
-const user = false;
+import useContext from "~/components/context/tempcontext";
+
+const { user } = useContext();
 </script>
 
 <template>
@@ -58,7 +60,7 @@ const user = false;
             class="glass-nav-link px-4 py-2 rounded-lg"
             active-class="bg-white/20"
           >
-            Account
+            {{ user.userName }}
           </NuxtLink>
         </div>
       </nav>

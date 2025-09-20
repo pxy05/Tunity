@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
+// TODO: Import registerUser function - this function is not yet implemented
 
 definePageMeta({
   layout: "default",

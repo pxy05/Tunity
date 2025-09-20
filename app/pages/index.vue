@@ -1,158 +1,14 @@
 <script setup lang="ts">
+import useContext from "~/components/context/tempcontext";
+
+const { user, userItems } = useContext();
+
 // Home page component
 definePageMeta({
   layout: "default",
 });
 
-const user = true;
-
 // Sample data for applications, interviews, and offers
-const userItems = [
-  {
-    id: 1,
-    name: "Software Engineer",
-    company: "Tech Corp",
-    status: "Application",
-    date: "2025-01-15",
-    location: "San Francisco, CA",
-    salary: "$120,000",
-  },
-  {
-    id: 2,
-    name: "Frontend Developer",
-    company: "StartupXYZ",
-    status: "Application",
-    date: "2025-01-10",
-    location: "Remote",
-    salary: "$95,000",
-  },
-  {
-    id: 3,
-    name: "Full Stack Developer",
-    company: "BigTech Inc",
-    status: "Application",
-    date: "2025-01-20",
-    location: "New York, NY",
-    salary: "$110,000",
-  },
-  {
-    id: 4,
-    name: "Software Engineer",
-    company: "Tech Corp",
-    status: "Application",
-    date: "2025-01-15",
-    location: "San Francisco, CA",
-    salary: "$120,000",
-  },
-  {
-    id: 5,
-    name: "Frontend Developer",
-    company: "StartupXYZ",
-    status: "Application",
-    date: "2025-01-10",
-    location: "Remote",
-    salary: "$95,000",
-  },
-  {
-    id: 6,
-    name: "Full Stack Developer",
-    company: "BigTech Inc",
-    status: "Application",
-    date: "2025-01-20",
-    location: "New York, NY",
-    salary: "$110,000",
-  },
-  {
-    id: 7,
-    name: "Software Engineer",
-    company: "Tech Corp",
-    status: "Application",
-    date: "2025-01-15",
-    location: "San Francisco, CA",
-    salary: "$120,000",
-  },
-  {
-    id: 8,
-    name: "Frontend Developer",
-    company: "StartupXYZ",
-    status: "Application",
-    date: "2025-01-10",
-    location: "Remote",
-    salary: "$95,000",
-  },
-  {
-    id: 9,
-    name: "Full Stack Developer",
-    company: "BigTech Inc",
-    status: "Application",
-    date: "2025-01-20",
-    location: "New York, NY",
-    salary: "$110,000",
-  },
-  {
-    id: 10,
-    name: "Software Engineer",
-    company: "Tech Corp",
-    status: "Interview",
-    date: "2025-01-15",
-    location: "San Francisco, CA",
-    salary: "$120,000",
-    time: "2:00 PM",
-    type: "Technical Interview",
-  },
-  {
-    id: 11,
-    name: "Frontend Developer",
-    company: "StartupXYZ",
-    status: "Interview",
-    date: "2025-01-10",
-    location: "Remote",
-    salary: "$95,000",
-    time: "10:00 AM",
-    type: "Phone Interview",
-  },
-  {
-    id: 12,
-    name: "Full Stack Developer",
-    company: "BigTech Inc",
-    status: "Interview",
-    date: "2025-01-20",
-    location: "New York, NY",
-    salary: "$110,000",
-    time: "3:30 PM",
-    type: "On-site Interview",
-  },
-  {
-    id: 13,
-    name: "Software Engineer",
-    company: "Tech Corp",
-    status: "Offer",
-    date: "2025-01-25",
-    location: "San Francisco, CA",
-    salary: "$120,000",
-    deadline: "2025-02-01",
-  },
-  {
-    id: 14,
-    name: "Frontend Developer",
-    company: "StartupXYZ",
-    status: "Offer",
-    date: "2025-01-18",
-    location: "Remote",
-    salary: "$95,000",
-    deadline: "2025-01-28",
-  },
-  {
-    id: 15,
-    name: "Frontend Developer",
-    company: "StartupXYZ",
-    status: "Offer",
-    date: "2025-01-20",
-    location: "Remote",
-    salary: "$95,000",
-    deadline: "2025-01-30",
-  },
-];
 
 const applications = userItems.filter((item) => item.status == "Application");
 const interviews = userItems.filter((item) => item.status == "Interview");
@@ -279,6 +135,10 @@ const formatDate = (dateString: string) => {
       <div class="mt-8 pt-6 border-t border-black/20">
         <h3 class="text-lg font-bold text-black/80 mb-4">Summary</h3>
         <div class="space-y-2 text-sm text-black/70">
+          <div class="flex justify-between">
+            <span>Total:</span>
+            <span class="font-bold">{{ userItems.length }}</span>
+          </div>
           <div class="flex justify-between">
             <span>Total Applications:</span>
             <span class="font-bold">{{ applications.length }}</span>
