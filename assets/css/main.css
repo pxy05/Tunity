@@ -1,66 +1,68 @@
-@import 'tailwindcss';
-@import '@fontsource/michroma';
+@import "tailwindcss";
+@import "@fontsource/michroma";
 
 /* Helvetica Font Faces */
 @font-face {
-  font-family: 'Helvetica';
-  src: url('/helvetica/Helvetica.ttf') format('truetype');
+  font-family: "Helvetica";
+  src: url("/helvetica/Helvetica.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'Helvetica';
-  src: url('/helvetica/Helvetica-Bold.ttf') format('truetype');
+  font-family: "Helvetica";
+  src: url("/helvetica/Helvetica-Bold.ttf") format("truetype");
   font-weight: bold;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'Helvetica';
-  src: url('/helvetica/Helvetica-Oblique.ttf') format('truetype');
+  font-family: "Helvetica";
+  src: url("/helvetica/Helvetica-Oblique.ttf") format("truetype");
   font-weight: normal;
   font-style: italic;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'Helvetica';
-  src: url('/helvetica/Helvetica-BoldOblique.ttf') format('truetype');
+  font-family: "Helvetica";
+  src: url("/helvetica/Helvetica-BoldOblique.ttf") format("truetype");
   font-weight: bold;
   font-style: italic;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'Helvetica Light';
-  src: url('/helvetica/helvetica-light-587ebe5a59211.ttf') format('truetype');
+  font-family: "Helvetica Light";
+  src: url("/helvetica/helvetica-light-587ebe5a59211.ttf") format("truetype");
   font-weight: 300;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'Helvetica Compressed';
-  src: url('/helvetica/helvetica-compressed-5871d14b6903a.otf') format('opentype');
+  font-family: "Helvetica Compressed";
+  src: url("/helvetica/helvetica-compressed-5871d14b6903a.otf")
+    format("opentype");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'Helvetica Rounded';
-  src: url('/helvetica/helvetica-rounded-bold-5871d05ead8de.otf') format('opentype');
+  font-family: "Helvetica Rounded";
+  src: url("/helvetica/helvetica-rounded-bold-5871d05ead8de.otf")
+    format("opentype");
   font-weight: bold;
   font-style: normal;
   font-display: swap;
 }
 
 @theme {
-  --font-helvetica: 'Helvetica', sans-serif;
-  --font-michroma: 'Michroma', sans-serif;
+  --font-helvetica: "Helvetica", sans-serif;
+  --font-michroma: "Michroma", sans-serif;
 }
 
 /* Global Glass Aesthetic Styles */
@@ -71,7 +73,7 @@
 }
 
 body {
-  background-image: url('/light_background2.jpg');
+  background-image: url("/light_background2.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -81,7 +83,7 @@ body {
   min-height: 100vh;
   height: 100vh;
   width: 100vw;
-  font-family: 'Helvetica', sans-serif;
+  font-family: "Helvetica", sans-serif;
 }
 
 /* Animations */
@@ -102,13 +104,17 @@ body {
 /* Glass Effect Enhancements */
 .glass-header::before,
 .glass-footer::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
   border-radius: inherit;
   z-index: -1;
 }
@@ -142,7 +148,6 @@ body {
   background-color: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
   border-radius: 5px;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
@@ -181,7 +186,7 @@ body {
 }
 
 .hover-expand-card:hover {
-  padding: 2rem;
+  padding: 1rem;
 }
 
 .hover-expand-ui {
@@ -197,4 +202,58 @@ body {
   body {
     background-size: 100% 100%;
   }
+}
+
+.scrollbar-hide {
+  /* IE and Edge */
+  -ms-overflow-style: none;
+  /* Firefox */
+  scrollbar-width: none;
+}
+
+/* Safari and Chrome */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Card Blur Gradient Effect */
+.card-blur-gradient {
+  position: relative;
+  overflow: hidden;
+}
+
+.card-blur-gradient::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 20px;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.8) 0%,
+    rgba(255, 255, 255, 0.4) 50%,
+    transparent 100%
+  );
+  backdrop-filter: blur(10px);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.card-blur-gradient::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 20px;
+  background: linear-gradient(
+    to top,
+    rgba(255, 255, 255, 0.8) 0%,
+    rgba(255, 255, 255, 0.4) 50%,
+    transparent 100%
+  );
+  backdrop-filter: blur(10px);
+  z-index: 1;
+  pointer-events: none;
 }

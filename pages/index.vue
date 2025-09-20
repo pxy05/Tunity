@@ -1,236 +1,280 @@
 <script setup lang="ts">
 // Home page component
 definePageMeta({
-  layout: 'default'
-})
+  layout: "default",
+});
 
 const user = true;
 
 // Sample data for applications, interviews, and offers
-const applications = [
+const userItems = [
   {
     id: 1,
     name: "Software Engineer",
     company: "Tech Corp",
-    status: "Applied",
+    status: "Application",
     date: "2025-01-15",
     location: "San Francisco, CA",
-    salary: "$120,000"
+    salary: "$120,000",
   },
   {
     id: 2,
     name: "Frontend Developer",
     company: "StartupXYZ",
-    status: "Under Review",
+    status: "Application",
     date: "2025-01-10",
     location: "Remote",
-    salary: "$95,000"
+    salary: "$95,000",
   },
   {
     id: 3,
     name: "Full Stack Developer",
     company: "BigTech Inc",
-    status: "Applied",
+    status: "Application",
     date: "2025-01-20",
     location: "New York, NY",
-    salary: "$110,000"
-  }
-]
-
-const interviews = [
-  {
-    id: 1,
-    name: "Software Engineer",
-    company: "Tech Corp",
-    status: "Scheduled",
-    date: "2025-01-25",
-    time: "2:00 PM",
-    type: "Technical Interview"
+    salary: "$110,000",
   },
   {
-    id: 2,
-    name: "Frontend Developer",
-    company: "StartupXYZ",
-    status: "Completed",
-    date: "2025-01-18",
-    time: "10:00 AM",
-    type: "Phone Interview"
-  }
-]
-
-const offers = [
+    id: 4,
+    name: "Software Engineer",
+    company: "Tech Corp",
+    status: "Application",
+    date: "2025-01-15",
+    location: "San Francisco, CA",
+    salary: "$120,000",
+  },
   {
-    id: 1,
+    id: 5,
     name: "Frontend Developer",
     company: "StartupXYZ",
-    status: "Received",
-    date: "2025-01-20",
+    status: "Application",
+    date: "2025-01-10",
+    location: "Remote",
     salary: "$95,000",
-    deadline: "2025-01-30"
-  }
-]
+  },
+  {
+    id: 6,
+    name: "Full Stack Developer",
+    company: "BigTech Inc",
+    status: "Application",
+    date: "2025-01-20",
+    location: "New York, NY",
+    salary: "$110,000",
+  },
+  {
+    id: 7,
+    name: "Software Engineer",
+    company: "Tech Corp",
+    status: "Application",
+    date: "2025-01-15",
+    location: "San Francisco, CA",
+    salary: "$120,000",
+  },
+  {
+    id: 8,
+    name: "Frontend Developer",
+    company: "StartupXYZ",
+    status: "Application",
+    date: "2025-01-10",
+    location: "Remote",
+    salary: "$95,000",
+  },
+  {
+    id: 9,
+    name: "Full Stack Developer",
+    company: "BigTech Inc",
+    status: "Application",
+    date: "2025-01-20",
+    location: "New York, NY",
+    salary: "$110,000",
+  },
+  {
+    id: 10,
+    name: "Software Engineer",
+    company: "Tech Corp",
+    status: "Interview",
+    date: "2025-01-15",
+    location: "San Francisco, CA",
+    salary: "$120,000",
+    time: "2:00 PM",
+    type: "Technical Interview",
+  },
+  {
+    id: 11,
+    name: "Frontend Developer",
+    company: "StartupXYZ",
+    status: "Interview",
+    date: "2025-01-10",
+    location: "Remote",
+    salary: "$95,000",
+    time: "10:00 AM",
+    type: "Phone Interview",
+  },
+  {
+    id: 12,
+    name: "Full Stack Developer",
+    company: "BigTech Inc",
+    status: "Interview",
+    date: "2025-01-20",
+    location: "New York, NY",
+    salary: "$110,000",
+    time: "3:30 PM",
+    type: "On-site Interview",
+  },
+  {
+    id: 13,
+    name: "Software Engineer",
+    company: "Tech Corp",
+    status: "Offer",
+    date: "2025-01-25",
+    location: "San Francisco, CA",
+    salary: "$120,000",
+    deadline: "2025-02-01",
+  },
+  {
+    id: 14,
+    name: "Frontend Developer",
+    company: "StartupXYZ",
+    status: "Offer",
+    date: "2025-01-18",
+    location: "Remote",
+    salary: "$95,000",
+    deadline: "2025-01-28",
+  },
+  {
+    id: 15,
+    name: "Frontend Developer",
+    company: "StartupXYZ",
+    status: "Offer",
+    date: "2025-01-20",
+    location: "Remote",
+    salary: "$95,000",
+    deadline: "2025-01-30",
+  },
+];
+
+const applications = userItems.filter((item) => item.status == "Application");
+const interviews = userItems.filter((item) => item.status == "Interview");
+const offers = userItems.filter((item) => item.status == "Offer");
 
 // Selection state
-const selectedView = ref('applications')
+const selectedView = ref("applications");
 
 // Computed property to get current data based on selection
 const currentData = computed(() => {
   switch (selectedView.value) {
-    case 'applications':
-      return applications
-    case 'interviews':
-      return interviews
-    case 'offers':
-      return offers
+    case "applications":
+      return applications;
+    case "interviews":
+      return interviews;
+    case "offers":
+      return offers;
+    case "all":
+      return userItems;
     default:
-      return applications
+      return applications;
   }
-})
+});
 
 // Method to format date
 const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric'
-  })
-}
-
+  return new Date(dateString).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+};
 </script>
 
 <template>
-  <div v-if="user" class="font-michroma w-[80%] h-full rounded-2xl flex flex-row gap-6">
-    <!-- Left side - Data display -->
-    <div class="glass flex-1 p-6">
-      <h1 class="text-black/80 text-4xl font-bold mb-6 drop-shadow-[0_4px_8px_rgba(0,0,0,0.3)]">
-        Welcome to Tunity
-      </h1>
-      
-      <!-- Data display based on selection -->
-      <div class="space-y-4">
-        <div v-if="currentData.length === 0" class="text-center text-black/60 py-8">
-          <p class="text-xl">No {{ selectedView }} found</p>
-          <p class="text-sm mt-2">Start by adding your first {{ selectedView.slice(0, -1) }}</p>
-        </div>
-        
-        <div v-else class="space-y-3">
-          <div 
-            v-for="item in currentData" 
-            :key="item.id"
-            class="glass-card p-4 rounded-lg hover-expand-card transition-all duration-300"
-          >
-            <!-- Applications display -->
-            <div v-if="selectedView === 'applications'">
-              <div class="flex justify-between items-start mb-2">
-                <h3 class="text-xl font-bold text-black/80">{{ item.name }}</h3>
-                <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
-                  {{ item.status }}
-                </span>
-              </div>
-              <p class="text-lg text-black/70 mb-2">{{ item.company }}</p>
-              <div class="flex justify-between text-sm text-black/60">
-                <span>{{ item.location }}</span>
-                <span>{{ item.salary }}</span>
-              </div>
-              <p class="text-sm text-black/50 mt-2">Applied: {{ formatDate(item.date) }}</p>
-            </div>
-            
-            <!-- Interviews display -->
-            <div v-else-if="selectedView === 'interviews'">
-              <div class="flex justify-between items-start mb-2">
-                <h3 class="text-xl font-bold text-black/80">{{ item.name }}</h3>
-                <span class="px-3 py-1 bg-orange-100 text-orange-800 rounded-full text-sm font-medium">
-                  {{ item.status }}
-                </span>
-              </div>
-              <p class="text-lg text-black/70 mb-2">{{ item.company }}</p>
-              <div class="flex justify-between text-sm text-black/60">
-                <span>{{ item.type }}</span>
-                <span>{{ item.time }}</span>
-              </div>
-              <p class="text-sm text-black/50 mt-2">Date: {{ formatDate(item.date) }}</p>
-            </div>
-            
-            <!-- Offers display -->
-            <div v-else-if="selectedView === 'offers'">
-              <div class="flex justify-between items-start mb-2">
-                <h3 class="text-xl font-bold text-black/80">{{ item.name }}</h3>
-                <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">
-                  {{ item.status }}
-                </span>
-              </div>
-              <p class="text-lg text-black/70 mb-2">{{ item.company }}</p>
-              <div class="flex justify-between text-sm text-black/60">
-                <span>Salary: {{ item.salary }}</span>
-                <span>Deadline: {{ formatDate(item.deadline) }}</span>
-              </div>
-              <p class="text-sm text-black/50 mt-2">Received: {{ formatDate(item.date) }}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Right side - Selection panel -->
-    <div class="glass-card w-80 p-6">
-      <h2 class="text-2xl font-bold text-black/80 mb-6 drop-shadow-[0_2px_4px_rgba(0,0,0,0.2)]">
+  <div v-if="user" class="flex flex-row gap-6 ml-4 mr-4 mt-4">
+    <div class="glass-card w-[20%] h-full p-6">
+      <h2
+        class="text-2xl font-bold text-black/80 mb-6 drop-shadow-[0_2px_4px_rgba(0,0,0,0.2)]"
+      >
         View Options
       </h2>
-      
+
       <!-- Selection buttons -->
       <div class="space-y-3">
         <button
           @click="selectedView = 'applications'"
           :class="[
-            'w-full p-4 text-left rounded-lg transition-all duration-300 font-bold text-lg',
-            selectedView === 'applications' 
-              ? 'bg-blue-500 text-white shadow-lg' 
-              : 'bg-white/50 text-black/80 hover:bg-blue-100 hover-expand-card'
+            'cursor-pointer w-full p-4 text-left rounded-lg transition-all duration-300 font-bold text-lg',
+            selectedView === 'applications'
+              ? 'bg-blue-500 text-white shadow-lg'
+              : 'bg-white/50 text-black/80 hover:bg-blue-100 hover-expand-card',
           ]"
         >
           <div class="flex items-center justify-between">
             <span>Applications</span>
-            <span class="px-2 py-1 bg-blue-200 text-blue-800 rounded-full text-sm">
+            <span
+              class="px-2 py-1 bg-blue-200 text-blue-800 rounded-full text-sm"
+            >
               {{ applications.length }}
             </span>
           </div>
         </button>
-        
+
         <button
           @click="selectedView = 'interviews'"
           :class="[
-            'w-full p-4 text-left rounded-lg transition-all duration-300 font-bold text-lg',
-            selectedView === 'interviews' 
-              ? 'bg-orange-500 text-white shadow-lg' 
-              : 'bg-white/50 text-black/80 hover:bg-orange-100 hover-expand-card'
+            'cursor-pointer w-full p-4 text-left rounded-lg transition-all duration-300 font-bold text-lg',
+            selectedView === 'interviews'
+              ? 'bg-orange-500 text-white shadow-lg'
+              : 'bg-white/50 text-black/80 hover:bg-orange-100 hover-expand-card',
           ]"
         >
           <div class="flex items-center justify-between">
             <span>Interviews</span>
-            <span class="px-2 py-1 bg-orange-200 text-orange-800 rounded-full text-sm">
+            <span
+              class="px-2 py-1 bg-orange-200 text-orange-800 rounded-full text-sm"
+            >
               {{ interviews.length }}
             </span>
           </div>
         </button>
-        
+
         <button
           @click="selectedView = 'offers'"
           :class="[
-            'w-full p-4 text-left rounded-lg transition-all duration-300 font-bold text-lg',
-            selectedView === 'offers' 
-              ? 'bg-green-500 text-white shadow-lg' 
-              : 'bg-white/50 text-black/80 hover:bg-green-100 hover-expand-card'
+            'cursor-pointer w-full p-4 text-left rounded-lg transition-all duration-300 font-bold text-lg',
+            selectedView === 'offers'
+              ? 'bg-green-500 text-white shadow-lg'
+              : 'bg-white/50 text-black/80 hover:bg-green-100 hover-expand-card',
           ]"
         >
           <div class="flex items-center justify-between">
             <span>Offers</span>
-            <span class="px-2 py-1 bg-green-200 text-green-800 rounded-full text-sm">
+            <span
+              class="px-2 py-1 bg-green-200 text-green-800 rounded-full text-sm"
+            >
               {{ offers.length }}
             </span>
           </div>
         </button>
+
+        <button
+          @click="selectedView = 'all'"
+          :class="[
+            'cursor-pointer w-full p-4 text-left rounded-lg transition-all duration-300 font-bold text-lg',
+            selectedView === 'all'
+              ? 'bg-orange-500 text-white shadow-lg'
+              : 'bg-white/50 text-black/80 hover:bg-orange-100 hover-expand-card',
+          ]"
+        >
+          <div class="flex items-center justify-between">
+            <span>All</span>
+            <span
+              class="px-2 py-1 bg-orange-200 text-orange-800 rounded-full text-sm"
+            >
+              {{ userItems.length }}
+            </span>
+          </div>
+        </button>
       </div>
-      
+
       <!-- Summary stats -->
       <div class="mt-8 pt-6 border-t border-black/20">
         <h3 class="text-lg font-bold text-black/80 mb-4">Summary</h3>
@@ -250,41 +294,172 @@ const formatDate = (dateString: string) => {
         </div>
       </div>
     </div>
+
+    <div
+      class="flex-col glass-card w-[80%] max-h-[85vh] p-6 border-transparent mb-4"
+    >
+      <div
+        class="cursor-pointer glass-card hover-expand-card flex flex-1 items-center mb-4 h-[10%] pl-4"
+      >
+        <button class="cursor-pointer flex-1">+ Add Item</button>
+      </div>
+      <!-- Data display based on selection -->
+      <div
+        class="space-y-4 flex-9 overflow-y-auto scrollbar-hide max-h-[88%] rounded-lg"
+      >
+        <div
+          v-if="currentData.length === 0"
+          class="text-center text-black/60 py-8"
+        >
+          <p class="text-xl">No {{ selectedView }} found</p>
+          <p class="text-sm mt-2">
+            Start by adding your first {{ selectedView.slice(0, -1) }}
+          </p>
+        </div>
+
+        <div v-else class="flex-1 space-y-3">
+          <div
+            v-for="item in currentData"
+            :key="item.id"
+            class="hover:cursor-pointer glass-card pl-4 pr-4 pt-2 pb-2 rounded-lg hover-expand-card"
+          >
+            <!-- Applications display -->
+            <div v-if="selectedView === 'applications'">
+              <div class="flex justify-between items-start mb-2">
+                <h3 class="text-xl font-bold text-black/80">{{ item.name }}</h3>
+                <span
+                  class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium"
+                >
+                  {{ item.status }}
+                </span>
+              </div>
+              <p class="text-lg text-black/70 mb-2">{{ item.company }}</p>
+              <div class="flex justify-between text-sm text-black/60">
+                <span>{{ item.location }}</span>
+                <span>{{ item.salary }}</span>
+              </div>
+              <p class="text-sm text-black/50 mt-2">
+                Applied: {{ formatDate(item.date) }}
+              </p>
+            </div>
+
+            <!-- Interviews display -->
+            <div v-else-if="selectedView === 'interviews'">
+              <div class="flex justify-between items-start mb-2">
+                <h3 class="text-xl font-bold text-black/80">{{ item.name }}</h3>
+                <span
+                  class="px-3 py-1 bg-orange-100 text-orange-800 rounded-full text-sm font-medium"
+                >
+                  {{ item.status }}
+                </span>
+              </div>
+              <p class="text-lg text-black/70 mb-2">{{ item.company }}</p>
+              <div class="flex justify-between text-sm text-black/60">
+                <span>{{ item.type }}</span>
+                <span>{{ item.time }}</span>
+              </div>
+              <p class="text-sm text-black/50 mt-2">
+                Date: {{ formatDate(item.date) }}
+              </p>
+            </div>
+
+            <!-- Offers display -->
+            <div v-else-if="selectedView === 'offers'">
+              <div class="flex justify-between items-start mb-2">
+                <h3 class="text-xl font-bold text-black/80">{{ item.name }}</h3>
+                <span
+                  class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium"
+                >
+                  {{ item.status }}
+                </span>
+              </div>
+              <p class="text-lg text-black/70 mb-2">{{ item.company }}</p>
+              <div class="flex justify-between text-sm text-black/60">
+                <span>Salary: {{ item.salary }}</span>
+                <span>Deadline: {{ formatDate(item.deadline) }}</span>
+              </div>
+              <p class="text-sm text-black/50 mt-2">
+                Received: {{ formatDate(item.date) }}
+              </p>
+            </div>
+
+            <!-- All items display -->
+            <div v-else-if="selectedView === 'all'">
+              <div class="flex justify-between items-start mb-2">
+                <h3 class="text-xl font-bold text-black/80">{{ item.name }}</h3>
+                <span
+                  :class="[
+                    'px-3 py-1 rounded-full text-sm font-medium',
+                    item.status === 'Application'
+                      ? 'bg-blue-100 text-blue-800'
+                      : item.status === 'Interview'
+                        ? 'bg-orange-100 text-orange-800'
+                        : 'bg-green-100 text-green-800',
+                  ]"
+                >
+                  {{ item.status }}
+                </span>
+              </div>
+              <p class="text-lg text-black/70 mb-2">{{ item.company }}</p>
+              <div class="flex justify-between text-sm text-black/60">
+                <span>{{ item.location }}</span>
+                <span>{{ item.salary }}</span>
+              </div>
+              <div class="flex justify-between text-sm text-black/50 mt-2">
+                <span>{{ formatDate(item.date) }}</span>
+                <span v-if="item.status === 'Interview' && item.time">{{
+                  item.time
+                }}</span>
+                <span v-if="item.status === 'Offer' && item.deadline"
+                  >Deadline: {{ formatDate(item.deadline) }}</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div v-else class="font-michroma glass w-[80%] h-full rounded-2xl flex flex-col items-center">
-    <h1 class="text-black/80 text-5xl font-bold mb-8 drop-shadow-[0_4px_8px_rgba(0,0,0,0.3)] mt-4">
-      Welcome to Tunity
-    </h1>
-    <p class="text-black/80 text-xl text-center max-w-md drop-shadow-[0_2px_4px_rgba(0,0,0,0.2)]">
-      Start tracking your application process here.
-    </p>
+  <div v-else class="flex flex-col items-center mt-4">
     <div
-      class="text-black/80 flex gap-4 w-full h-full text-center mt-4 mb-4 drop-shadow-[0_2px_4px_rgba(0,0,0,0.2)]"
+      class="font-michroma glass w-[80vw] h-[86vh] rounded-2xl flex flex-col items-center -mb-[10%]"
     >
-      <router-link
-        to="/account/login"
-        class="glass-card font-bold text-3xl flex-1 ml-4 text-left p-4 hover-expand-card"
+      <h1 class="text-black/80 text-5xl font-bold mb-8 mt-4">
+        Welcome to Tunity
+      </h1>
+      <p
+        class="text-black/80 text-xl text-center max-w-md drop-shadow-[0_2px_4px_rgba(0,0,0,0.2)]"
       >
-        <p>
-          Login<br />
-          to start <br />
-          searching <br />
-          again. <br />
-        </p>
-      </router-link>
+        Start tracking your application process here.
+      </p>
+      <div
+        class="text-black/80 flex gap-4 w-full h-full text-center mt-4 mb-4 drop-shadow-[0_2px_4px_rgba(0,0,0,0.2)]"
+      >
+        <router-link
+          to="/account/login"
+          class="glass-card font-bold text-3xl flex-1 ml-4 text-left p-4 hover-expand-card"
+        >
+          <p>
+            Login<br />
+            to start <br />
+            searching <br />
+            again. <br />
+          </p>
+        </router-link>
 
-      <router-link
-        to="/account/register"
-        class="glass-card font-bold text-3xl flex-1 mr-4 text-left p-4 hover-expand-card"
-      >
-        <p>
-          Register<br />
-          and start<br />
-          tracking your<br />
-          applications. <br />
-        </p>
-      </router-link>
+        <router-link
+          to="/account/register"
+          class="glass-card font-bold text-3xl flex-1 mr-4 text-left p-4 hover-expand-card"
+        >
+          <p>
+            Register<br />
+            and start<br />
+            tracking your<br />
+            applications. <br />
+          </p>
+        </router-link>
+      </div>
     </div>
   </div>
 </template>
