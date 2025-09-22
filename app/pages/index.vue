@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import useContext from "~/components/context/tempcontext";
+import useContext from "~/context/tempcontext";
 
 const { user, userItems } = useContext();
 
