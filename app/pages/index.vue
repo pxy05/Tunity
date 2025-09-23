@@ -3,6 +3,16 @@ import useContext from "~/context/tempcontext";
 
 const { user, userItems } = useContext();
 
+function getCardColor(status: string) {
+  const prefix = "hover:cursor-pointer glass-card-no-bg pl-4 pr-4 pt-2 pb-2 rounded-lg hover-expand-card"
+  switch (status) {
+    case "Application": return "bg-blue-200/50"
+    case "Interview": return "bg-orange-200/50"
+    case "Offer": return "bg-green-200/50"
+    default: return "bg-gray-100/50"
+  }
+}
+
 // Home page component
 definePageMeta({
   layout: "default",
@@ -140,7 +150,7 @@ const formatDate = (dateString: string) => {
             <span class="font-bold">{{ userItems.length }}</span>
           </div>
           <div class="flex justify-between">
-            <span>Total Applications:</span>
+            <span>Applications:</span>
             <span class="font-bold">{{ applications.length }}</span>
           </div>
           <div class="flex justify-between">
@@ -181,7 +191,7 @@ const formatDate = (dateString: string) => {
           <div
             v-for="item in currentData"
             :key="item.id"
-            class="hover:cursor-pointer glass-card pl-4 pr-4 pt-2 pb-2 rounded-lg hover-expand-card"
+            :class="['hover:cursor-pointer glass-card-no-bg pl-4 pr-4 pt-2 pb-2 rounded-lg hover-expand-card', getCardColor(item.status)]"
           >
             <!-- Applications display -->
             <div v-if="selectedView === 'applications'">

@@ -4,7 +4,7 @@
 /* Helvetica Font Faces */
 @font-face {
   font-family: "Helvetica";
-  src: url("/helvetica/Helvetica.ttf") format("truetype");
+  src: url("/assets/fonts/helvetica/Helvetica.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -12,7 +12,7 @@
 
 @font-face {
   font-family: "Helvetica";
-  src: url("/helvetica/Helvetica-Bold.ttf") format("truetype");
+  src: url("/assets/fonts/helvetica/Helvetica-Bold.ttf") format("truetype");
   font-weight: bold;
   font-style: normal;
   font-display: swap;
@@ -20,7 +20,7 @@
 
 @font-face {
   font-family: "Helvetica";
-  src: url("/helvetica/Helvetica-Oblique.ttf") format("truetype");
+  src: url("/assets/fonts/helvetica/Helvetica-Oblique.ttf") format("truetype");
   font-weight: normal;
   font-style: italic;
   font-display: swap;
@@ -28,7 +28,7 @@
 
 @font-face {
   font-family: "Helvetica";
-  src: url("/helvetica/Helvetica-BoldOblique.ttf") format("truetype");
+  src: url("/assets/fonts/helvetica/Helvetica-BoldOblique.ttf") format("truetype");
   font-weight: bold;
   font-style: italic;
   font-display: swap;
@@ -36,7 +36,7 @@
 
 @font-face {
   font-family: "Helvetica Light";
-  src: url("/helvetica/helvetica-light-587ebe5a59211.ttf") format("truetype");
+  src: url("/assets/fonts/helvetica/helvetica-light-587ebe5a59211.ttf") format("truetype");
   font-weight: 300;
   font-style: normal;
   font-display: swap;
@@ -44,7 +44,7 @@
 
 @font-face {
   font-family: "Helvetica Compressed";
-  src: url("/helvetica/helvetica-compressed-5871d14b6903a.otf")
+  src: url("/assets/fonts/helvetica/helvetica-compressed-5871d14b6903a.otf")
     format("opentype");
   font-weight: normal;
   font-style: normal;
@@ -53,7 +53,7 @@
 
 @font-face {
   font-family: "Helvetica Rounded";
-  src: url("/helvetica/helvetica-rounded-bold-5871d05ead8de.otf")
+  src: url("/assets/fonts/helvetica/helvetica-rounded-bold-5871d05ead8de.otf")
     format("opentype");
   font-weight: bold;
   font-style: normal;
@@ -146,6 +146,13 @@ body {
 
 .glass-card {
   background-color: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 5px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.glass-card-no-bg {
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 5px;
