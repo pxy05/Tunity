@@ -1,7 +1,10 @@
 @import "tailwindcss";
 @import "@fontsource/michroma";
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
 
 /* Helvetica Font Faces */
+
+
 @font-face {
   font-family: "Helvetica";
   src: url("/assets/fonts/helvetica/Helvetica.ttf") format("truetype");
@@ -67,6 +70,12 @@
 
 /* Global Glass Aesthetic Styles */
 
+/* Prevent unwanted scrollbars */
+html {
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
 /* Fixed Background - sits behind everything */
 * {
   color: #000;
@@ -81,9 +90,9 @@ body {
   margin: 0;
   padding: 0;
   min-height: 100vh;
-  height: 100vh;
-  width: 100vw;
-  font-family: "Helvetica", sans-serif;
+  font-family: "Roboto", sans-serif;
+  color: white;
+  overflow-x: hidden;
 }
 
 /* Animations */
@@ -99,6 +108,57 @@ body {
 
 .animate-float {
   animation: float 6s ease-in-out infinite;
+}
+
+.fade-bottom {
+  background: linear-gradient(180deg, rgba(221,226,238,0.40) 0%, rgba(221,226,238,0.00) 100%);
+  -webkit-mask-image: linear-gradient(to bottom, black 65%, rgba(0,0,0,0.88) 75%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 65%, rgba(0,0,0,0.88) 75%, transparent 100%);
+  backdrop-filter: blur(16px);
+}
+
+.fade-top {
+  background: linear-gradient(0deg, rgba(221,226,238,0.40) 0%, rgba(221,226,238,0.00) 100%);
+  -webkit-mask-image: linear-gradient(to top, black 65%, rgba(0,0,0,0.88) 75%, transparent 100%);
+  mask-image: linear-gradient(to top, black 65%, rgba(0,0,0,0.88) 75%, transparent 100%);
+  backdrop-filter: blur(16px);
+}
+
+.fade-bottom-top,
+.fade-top-bottom {
+  background: linear-gradient(180deg, rgba(221,226,238,0.40) 0%, rgba(221,226,238,0.00) 50%, rgba(221,226,238,0.40) 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%);
+  backdrop-filter: blur(16px);
+}
+
+.fade-left {
+  background: linear-gradient(270deg, rgba(221,226,238,0.40) 0%, rgba(221,226,238,0.00) 100%);
+  -webkit-mask-image: linear-gradient(to left, black 65%, rgba(0,0,0,0.88) 75%, transparent 100%);
+  mask-image: linear-gradient(to left, black 65%, rgba(0,0,0,0.88) 75%, transparent 100%);
+  backdrop-filter: blur(16px);
+}
+
+.fade-right {
+  background: linear-gradient(90deg, rgba(221,226,238,0.40) 0%, rgba(221,226,238,0.00) 100%);
+  -webkit-mask-image: linear-gradient(to right, black 65%, rgba(0,0,0,0.88) 75%, transparent 100%);
+  mask-image: linear-gradient(to right, black 65%, rgba(0,0,0,0.88) 75%, transparent 100%);
+  backdrop-filter: blur(16px);
+}
+
+.fade-left-right,
+.fade-right-left {
+  background: linear-gradient(90deg, rgba(221,226,238,0.40) 0%, rgba(221,226,238,0.00) 50%, rgba(221,226,238,0.40) 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 20%, black 80%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0%, black 20%, black 80%, transparent 100%);
+  backdrop-filter: blur(16px);
+}
+
+.fade-all {
+  background: radial-gradient(ellipse at center, rgba(221,226,238,0.40) 0%, rgba(221,226,238,0.00) 80%);
+  -webkit-mask-image: radial-gradient(ellipse at center, black 60%, transparent 100%);
+  mask-image: radial-gradient(ellipse at center, black 60%, transparent 100%);
+  backdrop-filter: blur(16px);
 }
 
 /* Glass Effect Enhancements */

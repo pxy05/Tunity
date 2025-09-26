@@ -4,7 +4,9 @@ import '~/assets/css/main.css'
 //Auth
 import { createClient } from '@supabase/supabase-js'
 const config = useRuntimeConfig()
-const supabase = createClient(config.public.supabaseUrl as string, config.public.supabasePublishableKey as string)
+const supabase = createClient(config.public.supabaseUrl as string, config.public.supabaseKey as string)
+console.log(config.public.subabaseUrl)
+console.log( config.public.supabaseKey)
 const instruments = ref([])
 
 async function getInstruments() {

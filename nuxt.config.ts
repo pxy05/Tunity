@@ -12,6 +12,10 @@ export default defineNuxtConfig({
     '@nuxtjs/supabase'
   ],
 
+  supabase: {
+    redirect: false
+  },
+
   app: {
     head: {
       title: 'Tunity',
@@ -25,7 +29,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       supabaseUrl: process.env.SUPABASE_URL,
-      supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+      supabaseKey: process.env.SUPABASE_KEY,
     },
   },
 })

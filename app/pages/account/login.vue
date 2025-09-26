@@ -1,5 +1,4 @@
 <script setup lang="ts">
-// Login page component
 definePageMeta({
   layout: "default",
 });

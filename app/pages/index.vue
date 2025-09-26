@@ -57,7 +57,7 @@ const formatDate = (dateString: string) => {
   <div v-if="user" class="flex flex-row gap-6 ml-4 mr-4 mt-4">
     <div class="glass-card w-[20%] h-full p-6">
       <h2
-        class="text-2xl font-bold text-black/80 mb-6 drop-shadow-[0_2px_4px_rgba(0,0,0,0.2)]"
+        class=" text-2xl font-bold text-white/80 mb-6 drop-shadow-[0_2px_4px_rgba(0,0,0,0.2)]"
       >
         View Options
       </h2>
@@ -166,7 +166,7 @@ const formatDate = (dateString: string) => {
     </div>
 
     <div
-      class="flex-col glass-card w-[80%] max-h-[85vh] p-6 border-transparent mb-4"
+      class="flex-col glass-card w-[80%] max-h-[85vh] p-6 border-transparent"
     >
       <div
         class="cursor-pointer glass-card hover-expand-card flex flex-1 items-center mb-4 h-[10%] pl-4"
