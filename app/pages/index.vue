@@ -1,18 +1,26 @@
 <script setup lang="ts">
 import useContext from "~/context/tempcontext";
 
-const { user, userItems } = useContext();
+const { userItems } = useContext();
 
 function getCardColor(status: string) {
-  const prefix = "hover:cursor-pointer glass-card-no-bg pl-4 pr-4 pt-2 pb-2 rounded-lg hover-expand-card"
+  const prefix =
+    "hover:cursor-pointer glass-card-no-bg pl-4 pr-4 pt-2 pb-2 rounded-lg hover-expand-card";
   switch (status) {
-    case "Application": return "bg-blue-200/50"
-    case "Interview": return "bg-orange-200/50"
-    case "Offer": return "bg-green-200/50"
-    default: return "bg-gray-100/50"
+    case "Application":
+      return "bg-blue-200/50";
+    case "Interview":
+      return "bg-orange-200/50";
+    case "Offer":
+      return "bg-green-200/50";
+    default:
+      return "bg-gray-100/50";
   }
 }
 
+const ui_options = computed(() => {
+  return "ui-button-compress transition-all duration-300 glass-ui cursor-pointer w-full p-4 text-left rounded-lg font-bold text-lg";
+});
 // Home page component
 definePageMeta({
   layout: "default",
@@ -20,9 +28,9 @@ definePageMeta({
 
 // Sample data for applications, interviews, and offers
 
-const applications = userItems.filter((item) => item.status == "Application");
-const interviews = userItems.filter((item) => item.status == "Interview");
-const offers = userItems.filter((item) => item.status == "Offer");
+const applications = userItems!.filter((item) => item.status == "Application");
+const interviews = userItems!.filter((item) => item.status == "Interview");
+const offers = userItems!.filter((item) => item.status == "Offer");
 
 // Selection state
 const selectedView = ref("applications");
@@ -54,24 +62,32 @@ const formatDate = (dateString: string) => {
 </script>
 
 <template>
-  <div v-if="user" class="flex flex-row gap-6 ml-4 mr-4 mt-4">
-    <div class="glass-card w-[20%] h-full p-6">
+  <div
+    v-if="user"
+    class="grid grid-cols-[20%_80%] h-[calc(100vh-6rem)] gap-6 ml-4 mr-4"
+  >
+    <div class="glass-card p-6 overflow-y-auto">
       <h2
-        class=" text-2xl font-bold text-white/80 mb-6 drop-shadow-[0_2px_4px_rgba(0,0,0,0.2)]"
+        class="text-2xl font-bold text-white/80 mb-6 drop-shadow-[0_2px_4px_rgba(0,0,0,0.2)]"
       >
         View Options
       </h2>
 
-      <!-- Selection buttons -->
       <div class="space-y-3">
         <button
           @click="selectedView = 'applications'"
-          :class="[
-            'cursor-pointer w-full p-4 text-left rounded-lg transition-all duration-300 font-bold text-lg',
+          :class="[ui_options]"
+          :style="
             selectedView === 'applications'
-              ? 'bg-blue-500 text-white shadow-lg'
-              : 'bg-white/50 text-black/80 hover:bg-blue-100 hover-expand-card',
-          ]"
+              ? {
+                  backgroundImage:
+                    'linear-gradient(120deg, rgba(59, 130, 246, 1), rgba(0, 0, 0, 0.2))',
+                }
+              : {
+                  backgroundImage:
+                    'linear-gradient(120deg, rgba(255, 255, 255, 0.3), rgba(0, 0, 0, 0.2))',
+                }
+          "
         >
           <div class="flex items-center justify-between">
             <span>Applications</span>
@@ -85,12 +101,18 @@ const formatDate = (dateString: string) => {
 
         <button
           @click="selectedView = 'interviews'"
-          :class="[
-            'cursor-pointer w-full p-4 text-left rounded-lg transition-all duration-300 font-bold text-lg',
+          :class="[ui_options]"
+          :style="
             selectedView === 'interviews'
-              ? 'bg-orange-500 text-white shadow-lg'
-              : 'bg-white/50 text-black/80 hover:bg-orange-100 hover-expand-card',
-          ]"
+              ? {
+                  backgroundImage:
+                    'linear-gradient(120deg, rgba(244, 99, 30, 1), rgba(0, 0, 0, 0.2))',
+                }
+              : {
+                  backgroundImage:
+                    'linear-gradient(120deg, rgba(255, 255, 255, 0.3), rgba(0, 0, 0, 0.2))',
+                }
+          "
         >
           <div class="flex items-center justify-between">
             <span>Interviews</span>
@@ -104,12 +126,18 @@ const formatDate = (dateString: string) => {
 
         <button
           @click="selectedView = 'offers'"
-          :class="[
-            'cursor-pointer w-full p-4 text-left rounded-lg transition-all duration-300 font-bold text-lg',
+          :class="[ui_options]"
+          :style="
             selectedView === 'offers'
-              ? 'bg-green-500 text-white shadow-lg'
-              : 'bg-white/50 text-black/80 hover:bg-green-100 hover-expand-card',
-          ]"
+              ? {
+                  backgroundImage:
+                    'linear-gradient(120deg, rgba(16, 185, 129, 1), rgba(0, 0, 0, 0.2))',
+                }
+              : {
+                  backgroundImage:
+                    'linear-gradient(120deg, rgba(255, 255, 255, 0.3), rgba(0, 0, 0, 0.2))',
+                }
+          "
         >
           <div class="flex items-center justify-between">
             <span>Offers</span>
@@ -123,17 +151,23 @@ const formatDate = (dateString: string) => {
 
         <button
           @click="selectedView = 'all'"
-          :class="[
-            'cursor-pointer w-full p-4 text-left rounded-lg transition-all duration-300 font-bold text-lg',
+          :class="[ui_options]"
+          :style="
             selectedView === 'all'
-              ? 'bg-orange-500 text-white shadow-lg'
-              : 'bg-white/50 text-black/80 hover:bg-orange-100 hover-expand-card',
-          ]"
+              ? {
+                  backgroundImage:
+                    'linear-gradient(120deg, rgba(139, 92, 246, 1), rgba(0, 0, 0, 0.2))',
+                }
+              : {
+                  backgroundImage:
+                    'linear-gradient(120deg, rgba(255, 255, 255, 0.3), rgba(0, 0, 0, 0.2))',
+                }
+          "
         >
           <div class="flex items-center justify-between">
             <span>All</span>
             <span
-              class="px-2 py-1 bg-orange-200 text-orange-800 rounded-full text-sm"
+              class="px-2 py-1 bg-purple-200 text-purple-800 rounded-full text-sm"
             >
               {{ userItems.length }}
             </span>
@@ -141,7 +175,6 @@ const formatDate = (dateString: string) => {
         </button>
       </div>
 
-      <!-- Summary stats -->
       <div class="mt-8 pt-6 border-t border-black/20">
         <h3 class="text-lg font-bold text-black/80 mb-4">Summary</h3>
         <div class="space-y-2 text-sm text-black/70">
@@ -166,17 +199,14 @@ const formatDate = (dateString: string) => {
     </div>
 
     <div
-      class="flex-col glass-card w-[80%] max-h-[85vh] p-6 border-transparent"
+      class="flex flex-col glass-card p-6 border-transparent overflow-hidden mr-6"
     >
       <div
-        class="cursor-pointer glass-card hover-expand-card flex flex-1 items-center mb-4 h-[10%] pl-4"
+        class="hover:ml-10 transition-all duration-300 cursor-pointer glass flex justify-center items-center py-2 mb-4 flex-shrink-0"
       >
         <button class="cursor-pointer flex-1">+ Add Item</button>
       </div>
-      <!-- Data display based on selection -->
-      <div
-        class="space-y-4 flex-9 overflow-y-auto scrollbar-hide max-h-[88%] rounded-lg"
-      >
+      <div class="space-y-4 overflow-y-auto scrollbar-hide rounded-lg flex-1">
         <div
           v-if="currentData.length === 0"
           class="text-center text-black/60 py-8"
@@ -191,7 +221,10 @@ const formatDate = (dateString: string) => {
           <div
             v-for="item in currentData"
             :key="item.id"
-            :class="['hover:cursor-pointer glass-card-no-bg pl-4 pr-4 pt-2 pb-2 rounded-lg hover-expand-card', getCardColor(item.status)]"
+            :class="[
+              'hover:cursor-pointer glass-card-no-bg pl-4 pr-4 pt-2 pb-2 rounded-lg hover:ml-10 transition-all duration-300',
+              getCardColor(item.status),
+            ]"
           >
             <!-- Applications display -->
             <div v-if="selectedView === 'applications'">
@@ -293,7 +326,8 @@ const formatDate = (dateString: string) => {
 
   <div v-else class="flex flex-col items-center mt-4">
     <div
-      class="font-michroma glass w-[80vw] h-[86vh] rounded-2xl flex flex-col items-center -mb-[10%]"
+      class="font-michroma glass-card w-[80vw] h-[80vh] rounded-2xl flex flex-col items-center -mb-[10%]"
+      style="background-size: 35px"
     >
       <h1 class="text-black/80 text-5xl font-bold mb-8 mt-4">
         Welcome to Tunity
