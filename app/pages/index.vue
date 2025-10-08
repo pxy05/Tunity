@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import useContext from "~/context/tempcontext";
 
-const { userItems } = useContext();
+const { user, userItems } = useContext();
 
 function getCardColor(status: string) {
   const prefix =
@@ -28,26 +28,30 @@ definePageMeta({
 
 // Sample data for applications, interviews, and offers
 
-const applications = userItems!.filter((item) => item.status == "Application");
-const interviews = userItems!.filter((item) => item.status == "Interview");
-const offers = userItems!.filter((item) => item.status == "Offer");
+const applications = computed(
+  () => userItems.value?.filter((item) => item.status == "Application") || []
+);
+const interviews = computed(
+  () => userItems.value?.filter((item) => item.status == "Interview") || []
+);
+const offers = computed(
+  () => userItems.value?.filter((item) => item.status == "Offer") || []
+);
 
-// Selection state
 const selectedView = ref("applications");
 
-// Computed property to get current data based on selection
 const currentData = computed(() => {
   switch (selectedView.value) {
     case "applications":
-      return applications;
+      return applications.value;
     case "interviews":
-      return interviews;
+      return interviews.value;
     case "offers":
-      return offers;
+      return offers.value;
     case "all":
-      return userItems;
+      return userItems.value || [];
     default:
-      return applications;
+      return applications.value;
   }
 });
 
@@ -64,7 +68,7 @@ const formatDate = (dateString: string) => {
 <template>
   <div
     v-if="user"
-    class="grid grid-cols-[20%_80%] h-[calc(100vh-6rem)] gap-6 ml-4 mr-4"
+    class="grid grid-cols-[20%_80%] h-[calc(100vh-rem)] gap-6 ml-4 mr-4"
   >
     <div class="glass-card p-6 overflow-y-auto">
       <h2
@@ -169,7 +173,7 @@ const formatDate = (dateString: string) => {
             <span
               class="px-2 py-1 bg-purple-200 text-purple-800 rounded-full text-sm"
             >
-              {{ userItems.length }}
+              {{ userItems?.length || 0 }}
             </span>
           </div>
         </button>
@@ -180,19 +184,19 @@ const formatDate = (dateString: string) => {
         <div class="space-y-2 text-sm text-black/70">
           <div class="flex justify-between">
             <span>Total:</span>
-            <span class="font-bold">{{ userItems.length }}</span>
+            <span class="font-bold">{{ userItems?.length || 0 }}</span>
           </div>
           <div class="flex justify-between">
             <span>Applications:</span>
-            <span class="font-bold">{{ applications.length }}</span>
+            <span class="font-bold">{{ applications?.length || 0 }}</span>
           </div>
           <div class="flex justify-between">
             <span>Interviews Scheduled:</span>
-            <span class="font-bold">{{ interviews.length }}</span>
+            <span class="font-bold">{{ interviews?.length || 0 }}</span>
           </div>
           <div class="flex justify-between">
             <span>Offers Received:</span>
-            <span class="font-bold">{{ offers.length }}</span>
+            <span class="font-bold">{{ offers?.length || 0 }}</span>
           </div>
         </div>
       </div>

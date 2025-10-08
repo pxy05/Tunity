@@ -1,5 +1,5 @@
 import type { Application, Interview, User } from "@/assets/types/database";
-import { useSupabaseUser } from "@supabase/supabase-js";
+import useApi from "~/composables/useApi";
 
 // const userItems = [
 //   {
@@ -160,18 +160,45 @@ import { useSupabaseUser } from "@supabase/supabase-js";
 //   userLastLogin: "2025-01-01",
 // };
 
-var user: User | null = null;
-var userItems: (Application | Interview)[] | null = null;
-
-const user = useSupabaseUser();
-
 export default function useContext() {
-  if (false) {
-    return { noUser, noUserItems };
-  }
+  const supabaseUser = useSupabaseUser();
+  const userItems = ref<Application[] | null>(null);
+  const loading = ref(true);
+  const error = ref<string | null>(null);
+
+  const loadUserData = async () => {
+    if (!supabaseUser.value?.id) {
+      loading.value = false;
+      return;
+    }
+
+    try {
+      loading.value = true;
+      userItems.value = await useApi.getUserApplications(supabaseUser.value.id);
+      error.value = null;
+    } catch (e) {
+      error.value = e instanceof Error ? e.message : "Failed to load data";
+      console.error("Error loading user data:", e);
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  watch(
+    supabaseUser,
+    (newUser) => {
+      if (newUser?.id) {
+        loadUserData();
+      }
+    },
+    { immediate: true }
+  );
 
   return {
-    user,
+    user: supabaseUser,
     userItems,
+    loading,
+    error,
+    loadUserData,
   };
 }

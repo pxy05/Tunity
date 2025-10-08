@@ -1,6 +1,5 @@
 <script setup>
 import useContext from "~/context/tempcontext";
-
 const { user } = useContext();
 </script>
 

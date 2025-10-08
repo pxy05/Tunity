@@ -30,6 +30,7 @@ export default defineNuxtConfig({
     public: {
       supabaseUrl: process.env.SUPABASE_URL,
       supabaseKey: process.env.SUPABASE_KEY,
+      tunityApiUrl: process.env.TUNITY_API_URL,
     },
   },
 });
