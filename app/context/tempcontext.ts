@@ -162,6 +162,7 @@ import useApi from "~/composables/useApi";
 
 export default function useContext() {
   const supabaseUser = useSupabaseUser();
+  const user = ref<User | null>(null);
   const userItems = ref<Application[] | null>(null);
   const loading = ref(true);
   const error = ref<string | null>(null);
@@ -185,7 +186,7 @@ export default function useContext() {
   };
 
   watch(
-    supabaseUser,
+    user,
     (newUser) => {
       if (newUser?.id) {
         loadUserData();
@@ -195,7 +196,7 @@ export default function useContext() {
   );
 
   return {
-    user: supabaseUser,
+    user,
     userItems,
     loading,
     error,
