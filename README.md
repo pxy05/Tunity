@@ -1,75 +1,16 @@
-# Nuxt Minimal Starter
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+# Tunity
 
-## Setup
 
-Make sure to install dependencies:
+## UX focused on simplicity
+Simplified UI so you can focus on what matters.
 
-```bash
-# npm
-npm install
+![App Screenshot](https://github.com/pxy05/Tunity/blob/main/repo_images/frontpage.png?raw=true)
 
-# pnpm
-pnpm install
+Colour Coded and Responsive design to help with intuitive navigation.
 
-# yarn
-yarn install
+![App Screenshot](https://github.com/pxy05/Tunity/blob/main/repo_images/application_page.png?raw=true)
 
-# bun
-bun install
-```
 
-## Development Server
 
-Start the development server on `http://localhost:3000`:
 
-```bash
-# npm
-npm run dev
-
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
-```
-
-## Production
-
-Build the application for production:
-
-```bash
-# npm
-npm run build
-
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
