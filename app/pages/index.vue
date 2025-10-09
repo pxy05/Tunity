@@ -2,6 +2,7 @@
 import useContext from "~/context/tempcontext";
 import DashboardView from "~/components/DashboardView.vue";
 import WelcomeView from "~/components/WelcomeView.vue";
+import NoTunityUser from "~/components/NoTunityUser.vue";
 
 const { user, userItems } = useContext();
 const supabaseUser = useSupabaseUser();
@@ -13,6 +14,7 @@ definePageMeta({
 </script>
 
 <template>
-  <DashboardView v-if="user" :user-items="userItems || []" />
+  <DashboardView v-if="user && supabaseUser" :user-items="userItems || []" />
+  <NoTunityUser v-if="!user && supabaseUser" />
   <WelcomeView v-else />
 </template>

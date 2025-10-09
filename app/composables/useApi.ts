@@ -65,7 +65,47 @@ async function getUserApplications(
   return applications;
 }
 
+async function createUser(
+  username: string,
+  firstname: string | null,
+  lastname: string | null
+) {
+  const apiURL = getApiUrl();
+
+  if (!username || username.trim() === "") {
+    throw new Error("Username is required");
+  }
+
+  if (
+    !firstname ||
+    !lastname ||
+    firstname.trim() === "" ||
+    lastname.trim() === ""
+  ) {
+    const response = await fetch(`${apiURL}/users`, {
+      method: "POST",
+      body: JSON.stringify({
+        id: useSupabaseUser().value?.id,
+        username: username,
+      }),
+    });
+    const data = await response.json();
+    return data;
+  }
+
+  const response = await fetch(`${apiURL}/users`, {
+    method: "POST",
+    body: JSON.stringify({
+      id: useSupabaseUser().value?.id,
+      username: username,
+      first_name: firstname,
+      last_name: lastname,
+    }),
+  });
+}
+
 export default {
   getUser,
   getUserApplications,
+  createUser,
 };
