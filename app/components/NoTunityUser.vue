@@ -1,16 +1,30 @@
 <script setup lang="ts">
 import useApi from "~/composables/useApi";
+import useContext from "~/context/tempcontext";
+
 const { createUser } = useApi;
+const { loadUserData } = useContext();
+
 const inputBoxClass =
-  "flex flex-row gap-2 pr-4 glass-card rounded-xl h-12 items-center text-center hover-expand-ui";
+  "flex flex-row gap-2 pr-2 glass-card rounded-xl h-12 items-center text-center hover-expand-ui";
 
 const username = ref("");
 const firstname = ref("");
 const lastname = ref("");
+const createUserError = ref("");
 
-const submit = () => {
-  console.log(username.value, firstname.value, lastname.value);
-  createUser(username.value, firstname.value, lastname.value);
+const submit = async () => {
+  createUserError.value = await createUser(
+    username.value,
+    firstname.value,
+    lastname.value
+  );
+  if (createUserError.value) {
+    console.log(createUserError.value);
+  } else {
+    createUserError.value = "User created successfully";
+    await loadUserData();
+  }
 };
 </script>
 
@@ -36,7 +50,7 @@ const submit = () => {
           </h1>
         </div>
         <div class="flex-2 glass-card m-4 ml-0">
-          <form action="">
+          <form @submit.prevent="submit">
             <div
               class="text-black/80 flex flex-col gap-4 text-xl text-bold p-4"
             >
@@ -44,30 +58,44 @@ const submit = () => {
                 <label for="username" class="pl-4 whitespace-nowrap w-40"
                   >Username*:</label
                 >
-                <input type="text" id="username" class="w-full" />
+                <input
+                  v-model="username"
+                  type="text"
+                  id="username"
+                  class="w-full border-solid border-2 border-gray-300/50 rounded-md"
+                />
               </div>
               <div :class="inputBoxClass">
                 <label for="firstname" class="pl-4 whitespace-nowrap w-40"
                   >First Name:</label
                 >
-                <input type="text" id="firstname" class="w-full" />
+                <input
+                  v-model="firstname"
+                  type="text"
+                  id="firstname"
+                  class="w-full border-solid border-2 border-gray-300/50 rounded-md"
+                />
               </div>
               <div :class="inputBoxClass">
                 <label for="lastname" class="pl-4 whitespace-nowrap w-40"
                   >Last Name:</label
                 >
-                <input type="text" id="lastname" class="w-full" />
+                <input
+                  v-model="lastname"
+                  type="text"
+                  id="lastname"
+                  class="w-full border-solid border-2 border-gray-300/50 rounded-md"
+                />
               </div>
               <div
                 class="flex flex-row gap-2 pr-4 glass-card rounded-xl h-12 items-center text-center hover-expand-card cursor-pointer"
               >
-                <button
-                  type="submit"
-                  class="w-full cursor-pointer"
-                  @click="submit"
-                >
+                <button type="submit" class="w-full cursor-pointer">
                   Submit
                 </button>
+                <p v-if="createUserError" class="text-red-500">
+                  {{ createUserError }}
+                </p>
               </div>
             </div>
           </form>

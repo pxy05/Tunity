@@ -5,12 +5,14 @@ function getApiUrl() {
   return config.public.tunityApiUrl;
 }
 
-async function getUser(user_id: string | undefined): Promise<User | null> {
-  if (!user_id) {
+async function getUser(): Promise<User | null> {
+  if (!useSupabaseUser().value?.id) {
     return null;
   }
   const apiURL = getApiUrl();
-  const response = await fetch(`${apiURL}/users/${user_id}`);
+  const response = await fetch(
+    `${apiURL}/users/${useSupabaseUser().value?.id}`
+  );
   const data = await response.json();
 
   if (data && typeof data === "object" && !Array.isArray(data)) {
@@ -75,33 +77,22 @@ async function createUser(
   if (!username || username.trim() === "") {
     throw new Error("Username is required");
   }
-
-  if (
-    !firstname ||
-    !lastname ||
-    firstname.trim() === "" ||
-    lastname.trim() === ""
-  ) {
-    const response = await fetch(`${apiURL}/users`, {
-      method: "POST",
-      body: JSON.stringify({
-        id: useSupabaseUser().value?.id,
-        username: username,
-      }),
-    });
-    const data = await response.json();
-    return data;
-  }
+  console.log("made it to 1");
 
   const response = await fetch(`${apiURL}/users`, {
     method: "POST",
     body: JSON.stringify({
       id: useSupabaseUser().value?.id,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
       username: username,
       first_name: firstname,
       last_name: lastname,
     }),
   });
+  console.log("made it to 1");
+  const data = await response.json();
+  return data.error || null;
 }
 
 export default {

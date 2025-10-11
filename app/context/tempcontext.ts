@@ -175,6 +175,7 @@ export default function useContext() {
 
     try {
       loading.value = true;
+      user.value = await useApi.getUser();
       userItems.value = await useApi.getUserApplications(supabaseUser.value.id);
       error.value = null;
     } catch (e) {
@@ -186,10 +187,12 @@ export default function useContext() {
   };
 
   watch(
-    user,
-    (newUser) => {
-      if (newUser?.id) {
+    supabaseUser,
+    (newSupabaseUser) => {
+      if (newSupabaseUser?.id) {
         loadUserData();
+      } else {
+        loading.value = false;
       }
     },
     { immediate: true }
