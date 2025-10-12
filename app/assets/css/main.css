@@ -397,10 +397,20 @@ body {
 
 .ui-button-compress {
   transform-origin: right center;
+  transition: transform 0.3s ease;
 }
 
 .ui-button-compress:hover {
   transform: scaleX(0.95);
+}
+
+.ui-button-compress-slight {
+  transform-origin: right center;
+  transition: transform 0.3s ease;
+}
+
+.ui-button-compress-slight:hover {
+  transform: scaleX(0.99);
 }
 
 .hover-expand-card {

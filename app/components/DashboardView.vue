@@ -3,12 +3,31 @@ import ApplicationCard from "./ApplicationCard.vue";
 import InterviewCard from "./InterviewCard.vue";
 import OfferCard from "./OfferCard.vue";
 import AllItemsCard from "./AllItemsCard.vue";
+import type { User, Application, Interview } from "~/assets/types/database";
+import AddApplication from "./applicationManagement/AddApplication.vue";
 
 interface Props {
-  userItems: any[];
+  userItems: Application[];
 }
 
 const props = defineProps<Props>();
+
+const addApplicationShown = ref<boolean | null>(false);
+const editApplicationShown = ref<boolean | null>(false);
+
+const addInterviewShown = ref<boolean | null>(false);
+const editInterviewShown = ref<boolean | null>(false);
+
+const applicationToEdit = ref<Application | null>(null);
+const interviewToEdit = ref<Interview | null>(null);
+
+// ---------------- view vs edit references -----------
+
+const viewApplicationShown = ref<boolean | null>(false);
+const viewInterviewShown = ref<boolean | null>(false);
+
+const applicationToView = ref<Application | null>(null);
+const interviewToView = ref<Interview | null>(null);
 
 function getCardColor(status: string) {
   switch (status) {
@@ -193,42 +212,91 @@ const currentData = computed(() => {
       class="flex flex-col glass-card p-6 border-transparent overflow-hidden mr-6"
     >
       <div
-        class="hover:ml-10 transition-all duration-300 cursor-pointer glass flex justify-center items-center py-2 mb-4 flex-shrink-0"
+        v-if="
+          !(
+            addApplicationShown ||
+            editApplicationShown ||
+            addInterviewShown ||
+            editInterviewShown ||
+            viewApplicationShown ||
+            viewInterviewShown
+          )
+        "
       >
-        <button class="cursor-pointer flex-1">+ Add Item</button>
-      </div>
-      <div class="space-y-4 overflow-y-auto scrollbar-hide rounded-lg flex-1">
         <div
-          v-if="currentData.length === 0"
-          class="text-center text-black/60 py-8"
+          class="hover:ml-10 transition-all duration-300 cursor-pointer glass flex justify-center items-center py-2 mb-4 flex-shrink-0"
         >
-          <p class="text-xl">No {{ selectedView }} found</p>
-          <p class="text-sm mt-2">
-            Start by adding your first {{ selectedView.slice(0, -1) }}
-          </p>
-        </div>
-
-        <div v-else class="flex-1 space-y-3">
-          <div
-            v-for="item in currentData"
-            :key="item.id"
-            :class="[
-              'hover:cursor-pointer glass-card-no-bg pl-4 pr-4 pt-2 pb-2 rounded-lg hover:ml-10 transition-all duration-300',
-              getCardColor(item.status),
-            ]"
+          <button
+            class="cursor-pointer flex-1"
+            @click="addApplicationShown = true"
           >
-            <ApplicationCard
-              v-if="selectedView === 'applications'"
-              :item="item"
-            />
-            <InterviewCard
-              v-else-if="selectedView === 'interviews'"
-              :item="item"
-            />
-            <OfferCard v-else-if="selectedView === 'offers'" :item="item" />
-            <AllItemsCard v-else-if="selectedView === 'all'" :item="item" />
+            + Add Item
+          </button>
+        </div>
+        <div class="space-y-4 overflow-y-auto scrollbar-hide rounded-lg flex-1">
+          <div
+            v-if="currentData.length === 0"
+            class="text-center text-black/60 py-8"
+          >
+            <p class="text-xl">No {{ selectedView }} found</p>
+            <p class="text-sm mt-2">
+              Start by adding your first {{ selectedView.slice(0, -1) }}
+            </p>
+          </div>
+
+          <div v-else class="flex-1 space-y-3">
+            <div
+              v-for="item in currentData"
+              :key="item.id"
+              :class="[
+                'hover:cursor-pointer glass-card-no-bg pl-4 pr-4 pt-2 pb-2 rounded-lg hover:ml-10 transition-all duration-300',
+                getCardColor(item.status),
+              ]"
+            >
+              <ApplicationCard
+                v-if="selectedView === 'applications'"
+                :item="item"
+              />
+              <InterviewCard
+                v-else-if="selectedView === 'interviews'"
+                :item="item"
+              />
+              <OfferCard v-else-if="selectedView === 'offers'" :item="item" />
+              <AllItemsCard v-else-if="selectedView === 'all'" :item="item" />
+            </div>
           </div>
         </div>
+      </div>
+      <div v-else>
+        <AddApplication
+          v-if="addApplicationShown"
+          :stateManagementReference="{ addApplicationShown }"
+        />
+        <EditApplication
+          v-if="editApplicationShown"
+          :applicationId="applicationToEdit?.id"
+          :stateManagementReference="{ editApplicationShown }"
+        />
+        <AddInterview
+          v-if="addInterviewShown"
+          :interviewId="interviewToEdit?.id"
+          :stateManagementReference="{ addInterviewShown }"
+        />
+        <EditInterview
+          v-if="editInterviewShown"
+          :interviewId="interviewToEdit?.id"
+          :stateManagementReference="{ editInterviewShown }"
+        />
+        <ViewApplication
+          v-if="viewApplicationShown"
+          :applicationId="applicationToView?.id"
+          :stateManagementReference="{ viewApplicationShown }"
+        />
+        <ViewInterview
+          v-if="viewInterviewShown"
+          :interviewId="interviewToView?.id"
+          :stateManagementReference="{ viewInterviewShown }"
+        />
       </div>
     </div>
   </div>

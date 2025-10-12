@@ -95,8 +95,29 @@ async function createUser(
   return data.error || null;
 }
 
+async function createApplication(application: Application) {
+  if (!application.user_id) {
+    throw new Error("User ID is required");
+  }
+  if (!application.company) {
+    throw new Error("Company is required");
+  }
+
+  const apiURL = getApiUrl();
+  const response = await fetch(`${apiURL}/applications`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(application),
+  });
+  const data = await response.json();
+  return data.error || null;
+}
+
 export default {
   getUser,
   getUserApplications,
   createUser,
+  createApplication,
 };

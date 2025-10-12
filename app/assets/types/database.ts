@@ -1,39 +1,39 @@
 export interface User {
-  id: string;
-  created_at: string;
-  username: string | null;
-  email: string | null;
-  first_name: string | null;
-  last_name: string | null;
-  updated_at: string | null;
+  id?: string;
+  created_at?: string;
+  username?: string;
+  email?: string;
+  first_name?: string;
+  last_name?: string;
+  updated_at?: string;
 }
 
 export interface Application {
-  id: string;
-  user_id: string | null;
-  created_at: string;
-  updated_at: string | null;
-  company: string | null;
-  status: string | null;
-  appli_title: string | null;
-  appli_location: string | null;
-  appli_notes: string | null;
-  appli_url: string | null;
-  appli_deadline: string | null;
-  appli_rejected: string | null;
-  interview_failed_date: string | null;
-  interview_failed_reason: string | null;
+  id?: string;
+  user_id: string;
+  created_at?: string;
+  updated_at?: string;
+  company: string;
+  status?: string;
+  appli_title?: string;
+  appli_location?: string;
+  appli_notes?: string;
+  appli_url?: string;
+  appli_deadline?: string;
+  appli_rejected?: string;
+  interview_failed_date?: string;
+  interview_failed_reason?: string;
 }
 
 export interface Interview {
-  id: string;
-  created_at: string;
-  updated_at: string | null;
-  appli_id: string | null;
-  round: number | null;
-  date: string | null;
-  type: string | null;
-  result: string | null;
+  id?: string;
+  created_at?: string;
+  updated_at?: string;
+  appli_id?: string;
+  round?: number;
+  date?: string;
+  type?: string;
+  result?: string;
 }
 
 export type UserInsert = Omit<User, "id" | "created_at"> & {
@@ -74,11 +74,12 @@ export interface InterviewWithApplication extends Interview {
 }
 
 export enum ApplicationStatus {
-  Applied = "Application",
-  Interview = "Interview",
-  Offer = "Offer",
-  Rejected = "Rejected",
-  Accepted = "Accepted",
+  Applied = "applied",
+  Rejected = "rejected",
+  Interview = "interview",
+  Offer = "offer",
+  OfferAccepted = "offer_accepted",
+  OfferRejected = "offer_rejected",
 }
 
 export enum InterviewResult {

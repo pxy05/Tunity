@@ -167,6 +167,11 @@ export default function useContext() {
   const loading = ref(true);
   const error = ref<string | null>(null);
 
+  const getApplicationById = async (id: string) => {
+    const application = userItems.value?.find((item) => item.id === id);
+    return application;
+  };
+
   const loadUserData = async () => {
     if (!supabaseUser.value?.id) {
       loading.value = false;
