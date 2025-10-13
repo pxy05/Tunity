@@ -11,14 +11,7 @@ export default defineNuxtConfig({
     "@nuxt/image",
     "@nuxt/ui",
     "@nuxtjs/supabase",
-    "@primevue/nuxt-module",
   ],
-
-  primevue: {
-    options: {
-      ripple: true,
-    },
-  },
 
   supabase: {
     redirect: false,

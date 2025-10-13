@@ -106,9 +106,6 @@ async function createApplication(application: Application) {
   const apiURL = getApiUrl();
   const response = await fetch(`${apiURL}/applications`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
     body: JSON.stringify(application),
   });
   const data = await response.json();

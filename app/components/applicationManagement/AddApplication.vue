@@ -1,9 +1,6 @@
 <script setup lang="ts">
 import useApi from "~/composables/useApi";
 import type { Application } from "~/assets/types/database";
-import DatePicker from "primevue/datepicker";
-import { Form } from "@primevue/forms";
-import Button from "primevue/button";
 
 const props = defineProps<{
   stateManagementReference: {
@@ -19,8 +16,9 @@ const companyName = ref("");
 const applicationStatus = ref("");
 const applicationLocation = ref("");
 const applicationLink = ref("");
-const applicationAppliedDate = ref("");
+const applicationAppliedDate = ref(Date.now());
 const applicationNotes = ref("");
+const applicationDeadlineDate = ref(Date.now());
 
 const application = computed(() => ({
   user_id: useSupabaseUser().value?.id || "",
@@ -30,7 +28,11 @@ const application = computed(() => ({
   appli_location: applicationLocation.value,
   appli_notes: applicationNotes.value,
   appli_url: applicationLink.value,
-  appli_deadline: applicationAppliedDate.value,
+  appli_deadline: applicationDeadlineDate.value
+    ? new Date(applicationDeadlineDate.value).toISOString()
+    : undefined,
+  created_at: new Date().toISOString(),
+  updated_at: new Date().toISOString(),
 }));
 const error = ref<string | null>(null);
 
@@ -64,80 +66,75 @@ const closeModal = () => {
     <hr class="border-black/50 border-rounded-full border-2 mb-4" />
     <h2 class="text-2xl font-bold mb-4">COMPANY DETAILS</h2>
 
-    <div class="flex flex-col gap-4 mb-2">
-      <div class="flex flex-row gap-2 ui-button-compress-slight">
-        <p :class="fieldTitleStyle">Application Role Name:</p>
-        <input
-          class="flex-10"
-          v-model="applicationTitle"
-          type="text"
-          :placeholder="fieldPlaceholder"
-        />
+    <div class="grid grid-cols-[200px_300px] gap-4 mb-2">
+      <p :class="fieldTitleStyle">Application Role Name:</p>
+      <input
+        class="w-full"
+        v-model="applicationTitle"
+        type="text"
+        :placeholder="fieldPlaceholder"
+      />
+
+      <p :class="fieldTitleStyle">Company Name*:</p>
+      <input
+        class="w-full"
+        v-model="companyName"
+        type="text"
+        :placeholder="fieldPlaceholder"
+      />
+
+      <p :class="fieldTitleStyle">Application Location:</p>
+      <input
+        class="w-full"
+        v-model="applicationLocation"
+        type="text"
+        :placeholder="fieldPlaceholder"
+      />
+
+      <p :class="fieldTitleStyle">Application Link:</p>
+      <input
+        class="w-full"
+        v-model="applicationLink"
+        type="text"
+        :placeholder="fieldPlaceholder"
+      />
+
+      <div class="col-span-2">
+        <hr class="border-black/50 border-rounded-full border-2" />
+        <h2 class="text-2xl font-bold mt-2">APPLICATION DETAILS</h2>
       </div>
 
-      <div class="flex flex-row gap-2 ui-button-compress-slight">
-        <p :class="fieldTitleStyle">Company Name*:</p>
-        <input
-          class="flex-10"
-          v-model="companyName"
-          type="text"
-          :placeholder="fieldPlaceholder"
-        />
-      </div>
+      <p :class="fieldTitleStyle">Application Applied Date:</p>
+      <input
+        class="w-full"
+        v-model="applicationAppliedDate"
+        type="date"
+        :placeholder="fieldPlaceholder"
+      />
 
-      <div class="flex flex-row gap-2 ui-button-compress-slight">
-        <p :class="fieldTitleStyle">Application Location:</p>
-        <input
-          class="flex-10"
-          v-model="applicationLocation"
-          type="text"
-          :placeholder="fieldPlaceholder"
-        />
-      </div>
+      <p :class="fieldTitleStyle">Application Deadline Date:</p>
+      <input
+        class="w-full"
+        v-model="applicationDeadlineDate"
+        type="date"
+        :placeholder="fieldPlaceholder"
+      />
 
-      <div class="flex flex-row gap-2 ui-button-compress-slight">
-        <p :class="fieldTitleStyle">Application Link:</p>
-        <input
-          class="flex-10"
-          v-model="applicationLink"
-          type="text"
-          :placeholder="fieldPlaceholder"
-        />
-      </div>
+      <p :class="fieldTitleStyle">Application Notes:</p>
+      <input
+        class="w-full"
+        v-model="applicationNotes"
+        type="text"
+        :placeholder="fieldPlaceholder"
+      />
 
-      <hr class="border-black/50 border-rounded-full border-2" />
-      <h2 class="text-2xl font-bold">APPLICATION DETAILS</h2>
-
-      <div class="flex flex-row gap-2 ui-button-compress-slight">
-        <p :class="fieldTitleStyle">Application Applied Date:</p>
-        <DatePicker
-          v-model="applicationAppliedDate"
-          dateFormat="dd/mm/yy"
-          showIcon
-          iconDisplay="input"
-        />
-        <Button label="Verify" />
-      </div>
-
-      <div class="flex flex-row gap-2 ui-button-compress-slight">
-        <p :class="fieldTitleStyle">Application Notes:</p>
-        <input
-          class="flex-10"
-          v-model="applicationNotes"
-          type="text"
-          :placeholder="fieldPlaceholder"
-        />
-      </div>
-
-      <div class="flex flex-row gap-2 ui-button-compress-slight">
-        <p :class="fieldTitleStyle">Application Status:</p>
-        <input
-          class="flex-10"
-          v-model="applicationStatus"
-          type="text"
-          :placeholder="fieldPlaceholder"
-        />
-      </div>
+      <p :class="fieldTitleStyle">Application Status:</p>
+      <input
+        class="w-full"
+        v-model="applicationStatus"
+        type="text"
+        :placeholder="fieldPlaceholder"
+      />
     </div>
     <div class="grid grid-rows-2 justify-items-end gap-2 w-full">
       <button
