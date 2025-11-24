@@ -1,15 +1,16 @@
 <script setup lang="ts">
-import type { OfferWithPosition } from "~/assets/types/database";
+import TextDisplay from "~/components/TextDisplay.vue";
+import type { AssessmentWithPosition } from "~/assets/types/database";
 
 interface Props {
-  item: OfferWithPosition;
+  item: AssessmentWithPosition;
 }
 
 const props = defineProps<Props>();
 
 const emit = defineEmits<{
-  edit: [item: OfferWithPosition];
-  delete: [item: OfferWithPosition];
+  edit: [item: AssessmentWithPosition];
+  delete: [item: AssessmentWithPosition];
 }>();
 
 const formatDate = (dateString: string | undefined) => {
@@ -33,6 +34,24 @@ const formatDateTime = (dateString: string | undefined) => {
   });
 };
 
+const getAssessmentTypeLabel = (type: string | undefined): string => {
+  if (!type) return "Assessment";
+  const labels: Record<string, string> = {
+    in_person_interview: "In-Person Interview",
+    online_interview: "Online Interview",
+    assessment_center: "Assessment Center",
+    hirevue: "Hirevue",
+    online_assessment: "Online Assessment",
+  };
+  return labels[type] || type;
+};
+
+const assessmentTitle = computed(() => {
+  const round = props.item.assessment.round || "N/A";
+  const typeLabel = getAssessmentTypeLabel(props.item.assessment.assessment_type);
+  return `Round ${round} - ${typeLabel}`;
+});
+
 const handleEdit = () => {
   emit("edit", props.item);
 };
@@ -42,8 +61,8 @@ const handleDelete = () => {
 };
 
 const handleCardClick = () => {
-  if (props.item.offer.id) {
-    navigateTo(`/offer/${props.item.offer.id}`);
+  if (props.item.assessment.id) {
+    navigateTo(`/assessment/${props.item.assessment.id}`);
   }
 };
 </script>
@@ -77,16 +96,33 @@ const handleCardClick = () => {
     
     <div class="space-y-2">
       <div class="flex items-center gap-2 text-sm">
-        <span
-          class="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800"
+        <span>{{ assessmentTitle }}</span>
+        <button
+          @click.stop="handleEdit"
+          :class="[
+            'px-2 py-1 rounded-full text-xs font-medium transition-colors',
+            item.assessment.completed
+              ? 'bg-green-100 text-green-800 hover:bg-green-200'
+              : 'bg-orange-100 text-orange-800 hover:bg-orange-200',
+          ]"
         >
-          Offer Received
-        </span>
+          {{ item.assessment.completed ? "Completed" : "Uncompleted" }}
+        </button>
       </div>
       
       <div class="text-sm">
-        <span>Received: </span>
-        <span>{{ formatDateTime(item.offer.received_at) }}</span>
+        <span>Date: </span>
+        <span>{{ formatDateTime(item.assessment.date) }}</span>
+      </div>
+      
+      <div v-if="item.assessment.pre_notes" class="text-sm mt-2">
+        <p class="font-semibold">Pre-notes: </p>
+        <TextDisplay :text="item.assessment.pre_notes" title="Pre-notes" :max-length="150" />
+      </div>
+      
+      <div v-if="item.assessment.post_notes" class="text-sm mt-2">
+        <p class="font-semibold">Post-notes: </p>
+        <TextDisplay :text="item.assessment.post_notes" title="Post-notes" :max-length="150" />
       </div>
       
       <div v-if="item.position.location" class="text-sm">
@@ -96,3 +132,4 @@ const handleCardClick = () => {
     </div>
   </div>
 </template>
+

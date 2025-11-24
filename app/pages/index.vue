@@ -4,7 +4,10 @@ import DashboardView from "~/components/DashboardView.vue";
 import WelcomeView from "~/components/WelcomeView.vue";
 import NoTunityUser from "~/components/NoTunityUser.vue";
 
-const { user, userItems, loading } = useContext();
+const context = useContext();
+const user = context.user;
+const userItems = context.userItems;
+const loading = context.loading;
 const supabaseUser = useSupabaseUser();
 
 definePageMeta({

@@ -89,7 +89,7 @@ const closeErrorModal = () => {
         <button
           type="submit"
           :disabled="isLoading"
-          class="w-full py-3 bg-white/20 border border-white/20 hover:bg-white/30 font-semibold rounded-lg transition-all duration-300 hover-expand-ui disabled:opacity-50 disabled:cursor-not-allowed"
+          class="w-full py-3 bg-white/20 border border-white/20 hover:bg-white/30 font-semibold rounded-lg transition-all duration-300 hover-expand-ui disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
         >
           {{ isLoading ? "Creating Account..." : "Create Account" }}
         </button>
@@ -112,7 +112,7 @@ const closeErrorModal = () => {
             <p class="text-gray-600 mb-4">{{ errorMessage }}</p>
             <button
               @click="closeErrorModal"
-              class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors"
+              class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors cursor-pointer"
             >
               Close
             </button>

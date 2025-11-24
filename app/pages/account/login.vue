@@ -68,7 +68,7 @@ const handleGitHubLogin = async () => {
         />
         <button
           type="submit"
-          class="w-full py-3 bg-white/20 border border-white/20 hover:bg-white/30 font-semibold rounded-lg transition-all duration-300 hover-expand-ui"
+          class="w-full py-3 bg-white/20 border border-white/20 hover:bg-white/30 font-semibold rounded-lg transition-all duration-300 hover-expand-ui cursor-pointer"
         >
           {{ loggingIn ? "Logging In..." : "Sign In" }}
         </button>
@@ -84,7 +84,7 @@ const handleGitHubLogin = async () => {
       <button
         @click="handleGitHubLogin"
         type="button"
-        class="w-full py-3 bg-gray-900/40 border border-white/20 hover:bg-gray-900/60 text-white font-semibold rounded-lg transition-all duration-300 hover-expand-ui flex items-center justify-center gap-3"
+        class="w-full py-3 bg-gray-900/40 border border-white/20 hover:bg-gray-900/60 text-white font-semibold rounded-lg transition-all duration-300 hover-expand-ui flex items-center justify-center gap-3 cursor-pointer"
       >
         <img
           src="/github-mark.svg"

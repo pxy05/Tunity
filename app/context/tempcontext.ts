@@ -1,4 +1,7 @@
-import type { Application, Interview, User } from "@/assets/types/database";
+import type {
+  PositionWithApplication,
+  User,
+} from "@/assets/types/database";
 import useApi from "~/composables/useApi";
 
 // const userItems = [
@@ -163,13 +166,29 @@ import useApi from "~/composables/useApi";
 export default function useContext() {
   const supabaseUser = useSupabaseUser();
   const user = ref<User | null>(null);
-  const userItems = ref<Application[] | null>(null);
+  const userItems = ref<PositionWithApplication[] | null>(null);
   const loading = ref(true);
   const error = ref<string | null>(null);
 
+  // Compute status for a position based on application/assessment existence
+  const computeStatus = (item: PositionWithApplication): string => {
+    if (item.rejected) {
+      return "Rejected";
+    }
+    if (item.assessments && item.assessments.length > 0) {
+      return "Interviewing";
+    }
+    if (item.application) {
+      return "Applied";
+    }
+    return "Saved";
+  };
+
   const getApplicationById = async (id: string) => {
-    const application = userItems.value?.find((item) => item.id === id);
-    return application;
+    const item = userItems.value?.find(
+      (item) => item.application?.id === id || item.id === id
+    );
+    return item;
   };
 
   const loadUserData = async () => {
@@ -180,8 +199,27 @@ export default function useContext() {
 
     try {
       loading.value = true;
-      user.value = await useApi.getUser();
-      userItems.value = await useApi.getUserApplications(supabaseUser.value.id);
+
+      // Get user
+      const userResult = await useApi.getUser();
+      if (userResult.error) {
+        error.value = userResult.error.error;
+        loading.value = false;
+        return;
+      }
+      user.value = userResult.data;
+
+      // Get positions with applications
+      const positionsResult = await useApi.getApplicationsWithPositions(
+        supabaseUser.value.id
+      );
+      if (positionsResult.error) {
+        error.value = positionsResult.error.error;
+        loading.value = false;
+        return;
+      }
+      userItems.value = positionsResult.data || [];
+
       error.value = null;
     } catch (e) {
       error.value = e instanceof Error ? e.message : "Failed to load data";
@@ -209,5 +247,6 @@ export default function useContext() {
     loading,
     error,
     loadUserData,
+    computeStatus,
   };
 }

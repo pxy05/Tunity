@@ -1,11 +1,14 @@
 <script setup lang="ts">
+import type { PositionWithApplication } from "~/assets/types/database";
+
 interface Props {
-  item: any;
+  item: PositionWithApplication;
 }
 
 defineProps<Props>();
 
-const formatDate = (dateString: string) => {
+const formatDate = (dateString: string | undefined) => {
+  if (!dateString) return "N/A";
   return new Date(dateString).toLocaleDateString("en-US", {
     year: "numeric",
     month: "short",
@@ -17,20 +20,26 @@ const formatDate = (dateString: string) => {
 <template>
   <div>
     <div class="flex justify-between items-start mb-2">
-      <h3 class="text-xl font-bold text-black/80">{{ item.name }}</h3>
+      <h3 class="text-xl font-bold text-black/80">
+        {{ item.position_name || "Untitled Position" }}
+      </h3>
       <span
         class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium"
       >
-        {{ item.status }}
+        Applied
       </span>
     </div>
-    <p class="text-lg text-black/70 mb-2">{{ item.company }}</p>
+    <p class="text-lg text-black/70 mb-2">
+      {{ item.company_name || "Unknown Company" }}
+    </p>
     <div class="flex justify-between text-sm text-black/60">
-      <span>{{ item.location }}</span>
-      <span>{{ item.salary }}</span>
+      <span>{{ item.location || "Location not specified" }}</span>
+      <span v-if="item.applied_date">
+        Applied: {{ formatDate(item.applied_date) }}
+      </span>
     </div>
-    <p class="text-sm text-black/50 mt-2">
-      Applied: {{ formatDate(item.date) }}
+    <p v-if="item.rejected" class="text-sm text-red-600 mt-2 font-semibold">
+      Rejected
     </p>
   </div>
 </template>
