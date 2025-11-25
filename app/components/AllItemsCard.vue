@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import useDateFormat from "~/composables/useDateFormat";
 import useContext from "~/context/tempcontext";
 import type { PositionWithApplication } from "~/assets/types/database";
 
@@ -9,14 +10,7 @@ interface Props {
 const props = defineProps<Props>();
 const context = useContext();
 
-const formatDate = (dateString: string | undefined) => {
-  if (!dateString) return "N/A";
-  return new Date(dateString).toLocaleDateString("en-GB", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
-};
+const { formatDate } = useDateFormat();
 
 const status = computed(() => context.computeStatus(props.item));
 </script>
@@ -34,9 +28,11 @@ const status = computed(() => context.computeStatus(props.item));
             ? 'bg-blue-100 text-blue-800'
             : status === 'Interviewing'
               ? 'bg-orange-100 text-orange-800'
-              : status === 'Rejected'
-                ? 'bg-red-100 text-red-800'
-                : 'bg-gray-100 text-gray-800',
+              : status === 'Offer'
+                ? 'bg-green-100 text-green-800'
+                : status === 'Rejected'
+                  ? 'bg-red-100 text-red-800'
+                  : 'bg-gray-100 text-gray-800',
         ]"
       >
         {{ status }}

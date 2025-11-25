@@ -1,8 +1,14 @@
 <script setup lang="ts">
 import useApi from "~/composables/useApi";
+import useDateFormat from "~/composables/useDateFormat";
+import { getAssessmentTypeLabel } from "~/utils/assessmentTypes";
 import EditAssessmentModal from "~/components/modals/EditAssessmentModal.vue";
 import DeleteConfirmationModal from "~/components/modals/DeleteConfirmationModal.vue";
 import TextDisplay from "~/components/TextDisplay.vue";
+import PageLoader from "~/components/UI/PageLoader.vue";
+import PageError from "~/components/UI/PageError.vue";
+import ActionButtons from "~/components/UI/ActionButtons.vue";
+import PositionDetailsCard from "~/components/PositionDetailsCard.vue";
 import type { Assessment, Position, Application, AssessmentWithPosition } from "~/assets/types/database";
 import backDashboard from "~/components/UI/backDashboard.vue";
 
@@ -24,38 +30,7 @@ const error = ref<string | null>(null);
 const editAssessmentModalOpen = ref(false);
 const deleteModalOpen = ref(false);
 
-const formatDate = (dateString: string | undefined) => {
-  if (!dateString) return "N/A";
-  return new Date(dateString).toLocaleDateString("en-GB", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
-};
-
-const formatDateTime = (dateString: string | undefined) => {
-  if (!dateString) return "N/A";
-  const date = new Date(dateString);
-  return date.toLocaleDateString("en-GB", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-  });
-};
-
-const getAssessmentTypeLabel = (type: string | undefined): string => {
-  if (!type) return "Assessment";
-  const labels: Record<string, string> = {
-    in_person_interview: "In-Person Interview",
-    online_interview: "Online Interview",
-    assessment_center: "Assessment Center",
-    hirevue: "Hirevue",
-    online_assessment: "Online Assessment",
-  };
-  return labels[type] || type;
-};
+const { formatDate, formatDateTime } = useDateFormat();
 
 const assessmentTitle = computed(() => {
   const round = assessment.value?.round || "N/A";
@@ -172,29 +147,8 @@ onMounted(() => {
 
 <template>
   <div class="min-h-screen p-6">
-    <div v-if="loading" class="flex items-center justify-center h-screen">
-      <div class="glass-card p-8 rounded-2xl">
-        <div class="flex flex-col items-center gap-4">
-          <div
-            class="animate-spin rounded-full h-16 w-16 border-b-4 border-black/80"
-          ></div>
-          <p class="text-xl font-bold text-black/80">Loading...</p>
-        </div>
-      </div>
-    </div>
-    
-    <div v-else-if="error" class="flex items-center justify-center h-screen">
-      <div class="glass-card p-8 rounded-2xl">
-        <p class="text-xl font-bold text-red-600">{{ error }}</p>
-        <button
-          @click="navigateTo('/')"
-          class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-        >
-          Go Back
-        </button>
-      </div>
-    </div>
-    
+    <PageLoader v-if="loading" />
+    <PageError v-else-if="error" :error="error" />
     <div v-else-if="assessment" class="max-w-4xl mx-auto">
       <!-- Back Button -->
       <backDashboard/>
@@ -203,20 +157,7 @@ onMounted(() => {
       <div class="glass-card bg-white/20 p-6 rounded-lg mb-6">
         <div class="flex justify-between items-start mb-6">
           <h1 class="text-2xl font-bold text-white/90">Assessment Details</h1>
-          <div class="flex gap-2">
-            <button
-              @click="handleEdit"
-              class="px-4 py-2 bg-white/20 text-white rounded hover:bg-white/30 border border-white/30 transition-colors"
-            >
-              Edit
-            </button>
-            <button
-              @click="handleDelete"
-              class="px-4 py-2 bg-red-500/20 text-white rounded hover:bg-red-500/30 border border-red-400/40 transition-colors"
-            >
-              Delete
-            </button>
-          </div>
+          <ActionButtons @edit="handleEdit" @delete="handleDelete" />
         </div>
         
         <div class="space-y-4 text-white/90">
@@ -262,77 +203,12 @@ onMounted(() => {
       </div>
       
       <!-- Position/Company Details -->
-      <div v-if="position" class="glass-card bg-white/20 p-6 rounded-lg">
-        <h2 class="text-2xl font-bold text-white/90 mb-6">Position & Company</h2>
-        
-        <div class="space-y-4 text-white/90">
-          <div>
-            <h3 class="text-xl font-semibold mb-2">
-              {{ position.position_name || "Untitled Position" }}
-            </h3>
-            <p class="text-lg text-white/80 mb-4">
-              {{ position.company_name || "Unknown Company" }}
-            </p>
-          </div>
-          
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <span class="font-semibold">Location: </span>
-              <span>{{ position.location || "Not specified" }}</span>
-            </div>
-            
-            <div v-if="position.applied_date">
-              <span class="font-semibold">Applied Date: </span>
-              <span>{{ formatDate(position.applied_date) }}</span>
-            </div>
-            
-            <div v-if="position.applied_deadline">
-              <span class="font-semibold">Application Deadline: </span>
-              <span>{{ formatDate(position.applied_deadline) }}</span>
-            </div>
-            
-            <div>
-              <span class="font-semibold">Status: </span>
-              <span
-                :class="[
-                  'px-2 py-1 rounded-full text-xs font-medium',
-                  position.rejected
-                    ? 'bg-red-100 text-red-800'
-                    : positionAssessments.length > 0
-                      ? 'bg-orange-100 text-orange-800'
-                      : application
-                        ? 'bg-blue-100 text-blue-800'
-                        : 'bg-gray-100 text-gray-800',
-                ]"
-              >
-                {{
-                  position.rejected
-                    ? "Rejected"
-                    : positionAssessments.length > 0
-                      ? "Interviewing"
-                      : application
-                        ? "Applied"
-                        : "Saved"
-                }}
-              </span>
-            </div>
-            
-            <div v-if="position.company_notes" class="md:col-span-2">
-              <span class="font-semibold">Company Notes: </span>
-              <p class="mt-1 text-white/70">{{ position.company_notes }}</p>
-            </div>
-          </div>
-          
-          <div v-if="position.id" class="mt-4">
-            <button
-              @click="navigateTo(`/position/${position.id}`)"
-              class="px-4 py-2 glass-card text-white rounded hover:bg-white/50 transition-colors"
-            >
-              View Full Position Details &#8669
-            </button>
-          </div>
-        </div>
-      </div>
+      <PositionDetailsCard
+        v-if="position"
+        :position="position"
+        :application="application"
+        :position-assessments="positionAssessments"
+      />
     </div>
 
     <!-- Modals -->

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import useDateFormat from "~/composables/useDateFormat";
 import type { PositionWithApplication } from "~/assets/types/database";
 
 interface Props {
@@ -7,14 +8,7 @@ interface Props {
 
 defineProps<Props>();
 
-const formatDate = (dateString: string | undefined) => {
-  if (!dateString) return "N/A";
-  return new Date(dateString).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
-};
+const { formatDate } = useDateFormat();
 </script>
 
 <template>

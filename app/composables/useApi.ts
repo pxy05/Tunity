@@ -75,6 +75,7 @@ async function getUser(): Promise<ApiResponse<User>> {
 
 async function createUser(
   username: string,
+  email: string,
   firstname: string | null,
   lastname: string | null
 ): Promise<ApiResponse<User>> {
@@ -87,16 +88,41 @@ async function createUser(
     };
   }
 
+  if (!email || email.trim() === "") {
+    return {
+      data: null,
+      error: { error: "Email is required", code: "VALIDATION_ERROR" },
+    };
+  }
+
+  // Ensure first_name and last_name are not null/empty (API spec requires minLength: 1)
+  const firstName = firstname && firstname.trim() !== "" ? firstname.trim() : "";
+  const lastName = lastname && lastname.trim() !== "" ? lastname.trim() : "";
+
+  if (!firstName || firstName.length === 0) {
+    return {
+      data: null,
+      error: { error: "First name is required", code: "VALIDATION_ERROR" },
+    };
+  }
+
+  if (!lastName || lastName.length === 0) {
+    return {
+      data: null,
+      error: { error: "Last name is required", code: "VALIDATION_ERROR" },
+    };
+  }
+
   const response = await fetch(`${apiURL}/users`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      id: useSupabaseUser().value?.id,
-      username: username,
-      first_name: firstname,
-      last_name: lastname,
+      username: username.trim(),
+      email: email.trim(),
+      first_name: firstName,
+      last_name: lastName,
     }),
   });
 

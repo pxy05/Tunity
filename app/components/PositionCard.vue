@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import useDateFormat from "~/composables/useDateFormat";
+import { getAssessmentTypeLabel } from "~/utils/assessmentTypes";
+import ActionButtons from "~/components/UI/ActionButtons.vue";
 import type { PositionWithApplication, Assessment } from "~/assets/types/database";
 
 interface Props {
@@ -12,38 +15,7 @@ const emit = defineEmits<{
   delete: [position: PositionWithApplication];
 }>();
 
-const formatDate = (dateString: string | undefined) => {
-  if (!dateString) return "N/A";
-  return new Date(dateString).toLocaleDateString("en-GB", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
-};
-
-const formatDateTime = (dateString: string | undefined) => {
-  if (!dateString) return "N/A";
-  const date = new Date(dateString);
-  return date.toLocaleDateString("en-GB", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-  });
-};
-
-const getAssessmentTypeLabel = (type: string | undefined): string => {
-  if (!type) return "Assessment";
-  const labels: Record<string, string> = {
-    in_person_interview: "In-Person Interview",
-    online_interview: "Online Interview",
-    assessment_center: "Assessment Center",
-    hirevue: "Hirevue",
-    online_assessment: "Online Assessment",
-  };
-  return labels[type] || type;
-};
+const { formatDate, formatDateTime } = useDateFormat();
 
 const isApplied = computed(() => !!props.item.application);
 
@@ -62,13 +34,6 @@ const latestAssessment = computed((): Assessment | null => {
   return sorted[0] || null;
 });
 
-const handleEdit = () => {
-  emit("edit", props.item);
-};
-
-const handleDelete = () => {
-  emit("delete", props.item);
-};
 
 const handleCardClick = () => {
   if (props.item.id) {
@@ -91,20 +56,7 @@ const handleCardClick = () => {
           {{ item.company_name || "Unknown Company" }}
         </p>
       </div>
-      <div class="flex gap-2 ml-4" @click.stop>
-        <button
-          @click.stop="handleEdit"
-          class="px-3 py-1 bg-white/20 text-white rounded hover:bg-white/30 border border-white/30 transition-colors text-sm"
-        >
-          Edit
-        </button>
-        <button
-          @click.stop="handleDelete"
-          class="px-3 py-1 bg-red-500/20 text-white rounded hover:bg-red-500/30 border border-red-400/40 transition-colors text-sm"
-        >
-          Delete
-        </button>
-      </div>
+      <ActionButtons size="sm" @edit="emit('edit', item)" @delete="emit('delete', item)" />
     </div>
     
     <div class="space-y-2">

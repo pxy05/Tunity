@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import useApi from "~/composables/useApi";
 import useContext from "~/context/tempcontext";
+import { getAssessmentTypeLabel } from "~/utils/assessmentTypes";
 import type { AssessmentInput, AssessmentWithPosition } from "~/assets/types/database";
 
 interface Props {
@@ -134,12 +135,6 @@ const submitAssessment = async (event?: Event) => {
 const closeModal = () => {
   error.value = null;
   emit("close");
-};
-
-const getAssessmentTypeLabel = (type: string | undefined): string => {
-  if (!type) return "";
-  const option = assessmentTypeOptions.find((opt) => opt.value === type);
-  return option?.label || type;
 };
 </script>
 

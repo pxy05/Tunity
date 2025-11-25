@@ -1,6 +1,19 @@
 <script setup>
 import useContext from "~/context/tempcontext";
+import AccountModal from "~/components/modals/AccountModal.vue";
+
 const { user } = useContext();
+
+const supabaseUser = useSupabaseUser();
+const accountModalOpen = ref(false);
+
+const openAccountModal = () => {
+  accountModalOpen.value = true;
+};
+
+const closeAccountModal = () => {
+  accountModalOpen.value = false;
+};
 </script>
 
 <template>
@@ -12,7 +25,19 @@ const { user } = useContext();
     </div>
     <div class="mr-6 flex flex-1 justify-end gap-4">
       <NuxtLink to="/" class="glass-nav-link px-6 py-2">Home</NuxtLink>
+      <button
+        v-if="supabaseUser"
+        @click="openAccountModal"
+        class="glass-nav-link px-6 py-2 cursor-pointer"
+      >
+        Account
+      </button>
     </div>
+
+    <AccountModal
+      :is-open="accountModalOpen"
+      @close="closeAccountModal"
+    />
   </nav>
 </template>
 

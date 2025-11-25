@@ -13,6 +13,22 @@ const supabaseUser = useSupabaseUser();
 definePageMeta({
   layout: "default",
 });
+
+// Ensure context loads user data when page mounts if user is available
+onMounted(async () => {
+  console.log("[INDEX] Page mounted");
+  console.log("[INDEX] supabaseUser:", supabaseUser.value ? `${supabaseUser.value.id} (${supabaseUser.value.email})` : "null");
+  console.log("[INDEX] user:", user.value ? `${user.value.id} (${user.value.username})` : "null");
+  console.log("[INDEX] loading:", loading.value);
+  console.log("[INDEX] userItems:", userItems.value?.length || 0, "items");
+  
+  if (supabaseUser.value?.id && !user.value && !loading.value) {
+    console.log("[INDEX] Supabase user exists but context hasn't loaded, triggering manually...");
+    // If Supabase user exists but context hasn't loaded, trigger it manually
+    await context.loadUserData();
+    console.log("[INDEX] After manual load - user:", user.value ? `${user.value.id}` : "null", "loading:", loading.value);
+  }
+});
 </script>
 
 <template>

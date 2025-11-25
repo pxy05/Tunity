@@ -1,13 +1,11 @@
 <script setup lang="ts">
-import { ref } from "vue";
-// TODO: Import registerUser function - this function is not yet implemented
-
 definePageMeta({
   layout: "default",
 });
 
+const supabase = useSupabaseClient();
+
 const formData = ref({
-  fullName: "",
   email: "",
   password: "",
 });
@@ -19,26 +17,38 @@ const isLoading = ref(false);
 const handleSubmit = async (event: Event) => {
   event.preventDefault();
 
-  if (
-    !formData.value.fullName ||
-    !formData.value.email ||
-    !formData.value.password
-  ) {
+  if (!formData.value.email || !formData.value.password) {
     errorMessage.value = "Please fill in all fields";
     showErrorModal.value = true;
     return;
   }
 
   isLoading.value = true;
+  errorMessage.value = "";
 
   try {
-    await registerUser({
-      fullName: formData.value.fullName,
+    // Sign up with Supabase (only authentication)
+    const { data: authData, error: authError } = await supabase.auth.signUp({
       email: formData.value.email,
       password: formData.value.password,
     });
 
-    console.log("User registered successfully");
+    if (authError) {
+      errorMessage.value = authError.message;
+      showErrorModal.value = true;
+      isLoading.value = false;
+      return;
+    }
+
+    if (!authData.user) {
+      errorMessage.value = "Failed to create authentication account";
+      showErrorModal.value = true;
+      isLoading.value = false;
+      return;
+    }
+
+    // Success - navigate to confirm page (which will check for backend user)
+    navigateTo("/account/confirm");
   } catch (error: any) {
     errorMessage.value =
       error.message || "An error occurred during registration";
@@ -64,14 +74,7 @@ const closeErrorModal = () => {
       >
         Create Account
       </h2>
-      <form @submit="handleSubmit" class="space-y-4">
-        <input
-          v-model="formData.fullName"
-          type="text"
-          placeholder="Full Name"
-          class="text-black w-full p-3 rounded-lg bg-white/10 border border-white/20 focus:outline-none focus:ring-2 focus:ring-white/30 hover-expand-ui"
-          required
-        />
+      <form @submit.prevent="handleSubmit" class="space-y-4">
         <input
           v-model="formData.email"
           type="email"

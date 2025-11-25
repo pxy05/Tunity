@@ -164,16 +164,20 @@ import useApi from "~/composables/useApi";
 // };
 
 export default function useContext() {
+  const supabase = useSupabaseClient();
   const supabaseUser = useSupabaseUser();
   const user = ref<User | null>(null);
   const userItems = ref<PositionWithApplication[] | null>(null);
   const loading = ref(true);
   const error = ref<string | null>(null);
 
-  // Compute status for a position based on application/assessment existence
+  // Compute status for a position based on application/assessment/offer existence
   const computeStatus = (item: PositionWithApplication): string => {
     if (item.rejected) {
       return "Rejected";
+    }
+    if (item.offer) {
+      return "Offer";
     }
     if (item.assessments && item.assessments.length > 0) {
       return "Interviewing";
@@ -192,50 +196,66 @@ export default function useContext() {
   };
 
   const loadUserData = async () => {
+    console.log("[CONTEXT] loadUserData called, supabaseUser:", supabaseUser.value?.id || "null");
     if (!supabaseUser.value?.id) {
+      console.log("[CONTEXT] No Supabase user ID, skipping load");
       loading.value = false;
       return;
     }
 
     try {
       loading.value = true;
+      console.log("[CONTEXT] Loading user data...");
 
       // Get user
       const userResult = await useApi.getUser();
       if (userResult.error) {
+        console.error("[CONTEXT] Error getting user:", userResult.error);
         error.value = userResult.error.error;
         loading.value = false;
         return;
       }
       user.value = userResult.data;
+      console.log("[CONTEXT] User loaded:", user.value?.id, user.value?.username);
 
       // Get positions with applications
       const positionsResult = await useApi.getApplicationsWithPositions(
         supabaseUser.value.id
       );
       if (positionsResult.error) {
+        console.error("[CONTEXT] Error getting positions:", positionsResult.error);
         error.value = positionsResult.error.error;
         loading.value = false;
         return;
       }
       userItems.value = positionsResult.data || [];
+      console.log("[CONTEXT] Positions loaded:", userItems.value?.length || 0, "items");
 
       error.value = null;
     } catch (e) {
       error.value = e instanceof Error ? e.message : "Failed to load data";
-      console.error("Error loading user data:", e);
+      console.error("[CONTEXT] Exception loading user data:", e);
     } finally {
       loading.value = false;
+      console.log("[CONTEXT] loadUserData complete, loading:", loading.value);
     }
   };
 
+  // Watch for Supabase user changes
+  // The module automatically syncs useSupabaseUser() when session exists
+  // We just need to load data when user becomes available
   watch(
     supabaseUser,
     (newSupabaseUser) => {
+      console.log("[CONTEXT] Supabase user watcher triggered:", newSupabaseUser ? `User: ${newSupabaseUser.id}` : "No user");
       if (newSupabaseUser?.id) {
+        console.log("[CONTEXT] User available, loading data...");
         loadUserData();
       } else {
+        console.log("[CONTEXT] No user, setting loading to false");
         loading.value = false;
+        user.value = null;
+        userItems.value = null;
       }
     },
     { immediate: true }

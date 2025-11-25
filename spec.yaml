@@ -1,0 +1,1104 @@
+openapi: 3.0.3
+info:
+  title: Tunity API
+  version: 1.0.0
+  description: API for managing users, positions, applications, and interviews
+
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+
+paths:
+  /users:
+    get:
+      summary: Get all users
+      operationId: getAllUsers
+      tags:
+        - Users
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '500':
+          $ref: '#/components/responses/DatabaseError'
+    
+    post:
+      summary: Create a new user
+      operationId: createUser
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserInput'
+      responses:
+        '201':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/DatabaseError'
+
+  /users/{id}:
+    get:
+      summary: Get user by ID
+      operationId: getUser
+      tags:
+        - Users
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/DatabaseError'
+    
+    put:
+      summary: Update user
+      operationId: updateUser
+      tags:
+        - Users
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserInput'
+      responses:
+        '200':
+          description: User updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/DatabaseError'
+    
+    delete:
+      summary: Delete user
+      operationId: deleteUser
+      tags:
+        - Users
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      responses:
+        '204':
+          description: User deleted successfully
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/DatabaseError'
+
+  /positions:
+    get:
+      summary: Get all positions
+      operationId: getAllPositions
+      tags:
+        - Positions
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Position'
+        '500':
+          $ref: '#/components/responses/DatabaseError'
+    
+    post:
+      summary: Create a new position
+      operationId: createPosition
+      tags:
+        - Positions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PositionInput'
+      responses:
+        '201':
+          description: Position created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Position'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/DatabaseError'
+
+  /positions/{id}:
+    get:
+      summary: Get position by ID
+      operationId: getPosition
+      tags:
+        - Positions
+      parameters:
+        - $ref: '#/components/parameters/PositionId'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Position'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/DatabaseError'
+    
+    put:
+      summary: Update position
+      operationId: updatePosition
+      tags:
+        - Positions
+      parameters:
+        - $ref: '#/components/parameters/PositionId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PositionInput'
+      responses:
+        '200':
+          description: Position updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Position'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/DatabaseError'
+    
+    delete:
+      summary: Delete position
+      operationId: deletePosition
+      tags:
+        - Positions
+      parameters:
+        - $ref: '#/components/parameters/PositionId'
+      responses:
+        '204':
+          description: Position deleted successfully
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/DatabaseError'
+
+  /applications:
+    get:
+      summary: Get all applications
+      operationId: getAllApplications
+      tags:
+        - Applications
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Application'
+        '500':
+          $ref: '#/components/responses/DatabaseError'
+    
+    post:
+      summary: Create a new application
+      operationId: createApplication
+      tags:
+        - Applications
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplicationInput'
+      responses:
+        '201':
+          description: Application created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/DatabaseError'
+
+  /applications/{id}:
+    get:
+      summary: Get application by ID
+      operationId: getApplication
+      tags:
+        - Applications
+      parameters:
+        - $ref: '#/components/parameters/ApplicationId'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/DatabaseError'
+    
+    put:
+      summary: Update application
+      operationId: updateApplication
+      tags:
+        - Applications
+      parameters:
+        - $ref: '#/components/parameters/ApplicationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplicationInput'
+      responses:
+        '200':
+          description: Application updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/DatabaseError'
+    
+    delete:
+      summary: Delete application
+      operationId: deleteApplication
+      tags:
+        - Applications
+      parameters:
+        - $ref: '#/components/parameters/ApplicationId'
+      responses:
+        '204':
+          description: Application deleted successfully
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/DatabaseError'
+
+  /interviews:
+    get:
+      summary: Get all interviews
+      operationId: getAllInterviews
+      tags:
+        - Interviews
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Interview'
+        '500':
+          $ref: '#/components/responses/DatabaseError'
+    
+    post:
+      summary: Create a new interview
+      operationId: createInterview
+      tags:
+        - Interviews
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InterviewInput'
+      responses:
+        '201':
+          description: Interview created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Interview'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/DatabaseError'
+
+  /interviews/{id}:
+    get:
+      summary: Get interview by ID
+      operationId: getInterview
+      tags:
+        - Interviews
+      parameters:
+        - $ref: '#/components/parameters/InterviewId'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Interview'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/DatabaseError'
+    
+    put:
+      summary: Update interview
+      operationId: updateInterview
+      tags:
+        - Interviews
+      parameters:
+        - $ref: '#/components/parameters/InterviewId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InterviewInput'
+      responses:
+        '200':
+          description: Interview updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Interview'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/DatabaseError'
+    
+    delete:
+      summary: Delete interview
+      operationId: deleteInterview
+      tags:
+        - Interviews
+      parameters:
+        - $ref: '#/components/parameters/InterviewId'
+      responses:
+        '204':
+          description: Interview deleted successfully
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/DatabaseError'
+
+  /assessments:
+    get:
+      summary: Get all assessments
+      operationId: getAllAssessments
+      tags:
+        - Assessments
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Assessment'
+        '500':
+          $ref: '#/components/responses/DatabaseError'
+    
+    post:
+      summary: Create a new assessment
+      operationId: createAssessment
+      tags:
+        - Assessments
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssessmentInput'
+      responses:
+        '201':
+          description: Assessment created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Assessment'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/DatabaseError'
+
+  /assessments/{id}:
+    get:
+      summary: Get assessment by ID
+      operationId: getAssessment
+      tags:
+        - Assessments
+      parameters:
+        - $ref: '#/components/parameters/AssessmentId'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Assessment'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/DatabaseError'
+    
+    put:
+      summary: Update assessment
+      operationId: updateAssessment
+      tags:
+        - Assessments
+      parameters:
+        - $ref: '#/components/parameters/AssessmentId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssessmentInput'
+      responses:
+        '200':
+          description: Assessment updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Assessment'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/DatabaseError'
+    
+    delete:
+      summary: Delete assessment
+      operationId: deleteAssessment
+      tags:
+        - Assessments
+      parameters:
+        - $ref: '#/components/parameters/AssessmentId'
+      responses:
+        '204':
+          description: Assessment deleted successfully
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/DatabaseError'
+
+  /offers:
+    get:
+      summary: Get all offers
+      operationId: getAllOffers
+      tags:
+        - Offers
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Offer'
+        '500':
+          $ref: '#/components/responses/DatabaseError'
+    
+    post:
+      summary: Create a new offer
+      operationId: createOffer
+      tags:
+        - Offers
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OfferInput'
+      responses:
+        '201':
+          description: Offer created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Offer'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/DatabaseError'
+
+  /offers/{id}:
+    get:
+      summary: Get offer by ID
+      operationId: getOffer
+      tags:
+        - Offers
+      parameters:
+        - $ref: '#/components/parameters/OfferId'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Offer'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/DatabaseError'
+    
+    put:
+      summary: Update offer
+      operationId: updateOffer
+      tags:
+        - Offers
+      parameters:
+        - $ref: '#/components/parameters/OfferId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OfferInput'
+      responses:
+        '200':
+          description: Offer updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Offer'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/DatabaseError'
+    
+    delete:
+      summary: Delete offer
+      operationId: deleteOffer
+      tags:
+        - Offers
+      parameters:
+        - $ref: '#/components/parameters/OfferId'
+      responses:
+        '204':
+          description: Offer deleted successfully
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/DatabaseError'
+
+components:
+  parameters:
+    UserId:
+      name: id
+      in: path
+      required: true
+      description: User UUID
+      schema:
+        type: string
+        format: uuid
+    
+    PositionId:
+      name: id
+      in: path
+      required: true
+      description: Position UUID
+      schema:
+        type: string
+        format: uuid
+    
+    ApplicationId:
+      name: id
+      in: path
+      required: true
+      description: Application UUID
+      schema:
+        type: string
+        format: uuid
+    
+    InterviewId:
+      name: id
+      in: path
+      required: true
+      description: Interview UUID
+      schema:
+        type: string
+        format: uuid
+    
+    AssessmentId:
+      name: id
+      in: path
+      required: true
+      description: Assessment UUID
+      schema:
+        type: string
+        format: uuid
+    
+    OfferId:
+      name: id
+      in: path
+      required: true
+      description: Offer UUID
+      schema:
+        type: string
+        format: uuid
+
+  schemas:
+    User:
+      type: object
+      required:
+        - id
+        - created_at
+      properties:
+        id:
+          type: string
+          format: uuid
+        created_at:
+          type: string
+          format: date-time
+        username:
+          type: string
+          nullable: true
+        email:
+          type: string
+          nullable: true
+        first_name:
+          type: string
+          nullable: true
+        last_name:
+          type: string
+          nullable: true
+        updated_at:
+          type: string
+          format: date-time
+          nullable: true
+
+    UserInput:
+      type: object
+      properties:
+        username:
+          type: string
+          minLength: 1
+        email:
+          type: string
+          format: email
+          minLength: 1
+        first_name:
+          type: string
+          minLength: 1
+        last_name:
+          type: string
+          minLength: 1
+
+    Position:
+      type: object
+      required:
+        - id
+        - user_id
+        - created_at
+      properties:
+        id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+        company_name:
+          type: string
+          nullable: true
+        position_name:
+          type: string
+          nullable: true
+        location:
+          type: string
+          nullable: true
+        company_img:
+          type: string
+          nullable: true
+        rejected:
+          type: boolean
+          nullable: true
+        applied_deadline:
+          type: string
+          format: date-time
+          nullable: true
+        applied_date:
+          type: string
+          format: date-time
+          nullable: true
+        company_notes:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+          nullable: true
+
+    PositionInput:
+      type: object
+      required:
+        - user_id
+      properties:
+        user_id:
+          type: string
+          format: uuid
+        company_name:
+          type: string
+          minLength: 1
+        position_name:
+          type: string
+          minLength: 1
+        location:
+          type: string
+          minLength: 1
+        company_img:
+          type: string
+          minLength: 1
+        rejected:
+          type: boolean
+        applied_deadline:
+          type: string
+          format: date-time
+        applied_date:
+          type: string
+          format: date-time
+        company_notes:
+          type: string
+          minLength: 1
+
+    Application:
+      type: object
+      required:
+        - id
+        - created_at
+      properties:
+        id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+          nullable: true
+        position_id:
+          type: string
+          format: uuid
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+          nullable: true
+        notes:
+          type: string
+          nullable: true
+
+    ApplicationInput:
+      type: object
+      properties:
+        user_id:
+          type: string
+          format: uuid
+        position_id:
+          type: string
+          format: uuid
+        notes:
+          type: string
+          minLength: 1
+
+    Interview:
+      type: object
+      required:
+        - id
+        - created_at
+      properties:
+        id:
+          type: string
+          format: uuid
+        position_id:
+          type: string
+          format: uuid
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+          nullable: true
+        notes:
+          type: string
+          nullable: true
+        date:
+          type: string
+          format: date-time
+          nullable: true
+        round:
+          type: integer
+          format: int64
+          minimum: 1
+          nullable: true
+        completed:
+          type: boolean
+          nullable: true
+
+    InterviewInput:
+      type: object
+      properties:
+        position_id:
+          type: string
+          format: uuid
+        notes:
+          type: string
+          minLength: 1
+        date:
+          type: string
+          format: date-time
+        round:
+          type: integer
+          format: int64
+          minimum: 1
+        completed:
+          type: boolean
+
+    Assessment:
+      type: object
+      required:
+        - id
+        - created_at
+      properties:
+        id:
+          type: string
+          format: uuid
+        position_id:
+          type: string
+          format: uuid
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+          nullable: true
+        pre_notes:
+          type: string
+          nullable: true
+        post_notes:
+          type: string
+          nullable: true
+        date:
+          type: string
+          format: date-time
+          nullable: true
+        round:
+          type: integer
+          format: int64
+          minimum: 1
+          nullable: true
+        completed:
+          type: boolean
+          nullable: true
+        assessment_type:
+          type: string
+          enum:
+            - in_person_interview
+            - online_interview
+            - assessment_center
+            - hirevue
+            - online_assessment
+          nullable: true
+
+    AssessmentInput:
+      type: object
+      properties:
+        position_id:
+          type: string
+          format: uuid
+        pre_notes:
+          type: string
+          minLength: 1
+        post_notes:
+          type: string
+          minLength: 1
+        date:
+          type: string
+          format: date-time
+        round:
+          type: integer
+          format: int64
+          minimum: 1
+        completed:
+          type: boolean
+        assessment_type:
+          type: string
+          enum:
+            - in_person_interview
+            - online_interview
+            - assessment_center
+            - hirevue
+            - online_assessment
+
+    Offer:
+      type: object
+      required:
+        - id
+        - created_at
+      properties:
+        id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+          nullable: true
+        position_id:
+          type: string
+          format: uuid
+          nullable: true
+        received_at:
+          type: string
+          format: date-time
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+          nullable: true
+
+    OfferInput:
+      type: object
+      properties:
+        user_id:
+          type: string
+          format: uuid
+        position_id:
+          type: string
+          format: uuid
+        received_at:
+          type: string
+          format: date-time
+
+    Error:
+      type: object
+      required:
+        - error
+        - code
+      properties:
+        error:
+          type: string
+        code:
+          type: string
+          enum:
+            - VALIDATION_ERROR
+            - NOT_FOUND
+            - DUPLICATE_ERROR
+            - DATABASE_ERROR
+            - INVALID_INPUT
+
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            validationError:
+              value:
+                error: "username cannot be empty"
+                code: "VALIDATION_ERROR"
+            duplicateError:
+              value:
+                error: "Username already exists"
+                code: "DUPLICATE_ERROR"
+            emailDuplicateError:
+              value:
+                error: "Email already exists"
+                code: "DUPLICATE_ERROR"
+            invalidInput:
+              value:
+                error: "Invalid user ID format"
+                code: "INVALID_INPUT"
+            positionDuplicate:
+              value:
+                error: "A position with the same company, role, and applied deadline already exists"
+                code: "DUPLICATE_ERROR"
+            roundValidation:
+              value:
+                error: "round must be a positive integer (>= 1)"
+                code: "VALIDATION_ERROR"
+            assessmentTypeValidation:
+              value:
+                error: "assessment_type must be one of: in_person_interview, online_interview, assessment_center, hirevue, online_assessment"
+                code: "VALIDATION_ERROR"
+            offerDuplicate:
+              value:
+                error: "An offer for this position already exists"
+                code: "DUPLICATE_ERROR"
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: "User not found"
+            code: "NOT_FOUND"
+
+    DatabaseError:
+      description: Database error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: "Failed to retrieve users"
+            code: "DATABASE_ERROR"

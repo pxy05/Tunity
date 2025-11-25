@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import useDateFormat from "~/composables/useDateFormat";
 import TextDisplay from "~/components/TextDisplay.vue";
+import ActionButtons from "~/components/UI/ActionButtons.vue";
 import type { InterviewWithPosition } from "~/assets/types/database";
 
 interface Props {
@@ -13,34 +15,8 @@ const emit = defineEmits<{
   delete: [item: InterviewWithPosition];
 }>();
 
-const formatDate = (dateString: string | undefined) => {
-  if (!dateString) return "N/A";
-  return new Date(dateString).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
-};
+const { formatDateTime } = useDateFormat();
 
-const formatDateTime = (dateString: string | undefined) => {
-  if (!dateString) return "N/A";
-  const date = new Date(dateString);
-  return date.toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-  });
-};
-
-const handleEdit = () => {
-  emit("edit", props.item);
-};
-
-const handleDelete = () => {
-  emit("delete", props.item);
-};
 
 const handleCardClick = () => {
   if (props.item.interview.id) {
@@ -60,20 +36,7 @@ const handleCardClick = () => {
           {{ item.position.company_name || "Unknown Company" }}
         </p>
       </div>
-      <div class="flex gap-2 ml-4" @click.stop>
-        <button
-          @click.stop="handleEdit"
-          class="px-3 py-1 bg-white/20 text-white rounded hover:bg-white/30 border border-white/30 transition-colors text-sm"
-        >
-          Edit
-        </button>
-        <button
-          @click.stop="handleDelete"
-          class="px-3 py-1 bg-red-500/20 text-white rounded hover:bg-red-500/30 border border-red-400/40 transition-colors text-sm"
-        >
-          Delete
-        </button>
-      </div>
+      <ActionButtons size="sm" @edit="emit('edit', item)" @delete="emit('delete', item)" />
     </div>
     
     <div class="space-y-2">

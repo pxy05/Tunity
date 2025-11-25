@@ -1,8 +1,14 @@
 <script setup lang="ts">
 import useApi from "~/composables/useApi";
+import useDateFormat from "~/composables/useDateFormat";
+import { getAssessmentTypeLabel } from "~/utils/assessmentTypes";
 import EditPositionModal from "~/components/modals/EditPositionModal.vue";
+import EditApplicationModal from "~/components/modals/EditApplicationModal.vue";
 import DeleteConfirmationModal from "~/components/modals/DeleteConfirmationModal.vue";
 import TextDisplay from "~/components/TextDisplay.vue";
+import PageLoader from "~/components/UI/PageLoader.vue";
+import PageError from "~/components/UI/PageError.vue";
+import ActionButtons from "~/components/UI/ActionButtons.vue";
 import backDashboard from "~/components/UI/backDashboard.vue";
 import type { PositionWithApplication, Assessment, Offer, Application } from "~/assets/types/database";
 
@@ -19,6 +25,7 @@ const error = ref<string | null>(null);
 
 // Modal states
 const editPositionModalOpen = ref(false);
+const editApplicationModalOpen = ref(false);
 const deleteModalOpen = ref(false);
 
 interface TimelineEvent {
@@ -30,38 +37,7 @@ interface TimelineEvent {
   offer?: Offer;
 }
 
-const getAssessmentTypeLabel = (type: string | undefined): string => {
-  if (!type) return "Assessment";
-  const labels: Record<string, string> = {
-    in_person_interview: "In-Person Interview",
-    online_interview: "Online Interview",
-    assessment_center: "Assessment Center",
-    hirevue: "Hirevue",
-    online_assessment: "Online Assessment",
-  };
-  return labels[type] || type;
-};
-
-const formatDate = (dateString: string | undefined) => {
-  if (!dateString) return "N/A";
-  return new Date(dateString).toLocaleDateString("en-GB", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
-};
-
-const formatDateTime = (dateString: string | undefined) => {
-  if (!dateString) return "N/A";
-  const date = new Date(dateString);
-  return date.toLocaleDateString("en-GB", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-  });
-};
+const { formatDate, formatDateTime } = useDateFormat();
 
 const timeline = computed((): TimelineEvent[] => {
   if (!position.value) return [];
@@ -177,6 +153,17 @@ const handlePositionModalSaved = async () => {
   await loadPositionData();
 };
 
+const handleApplicationClick = () => {
+  if (position.value?.application) {
+    editApplicationModalOpen.value = true;
+  }
+};
+
+const handleApplicationModalSaved = async () => {
+  editApplicationModalOpen.value = false;
+  await loadPositionData();
+};
+
 const confirmDelete = async () => {
   if (!position.value?.id) return;
 
@@ -251,20 +238,7 @@ onMounted(() => {
               {{ position.company_name || "Unknown Company" }}
             </p>
           </div>
-          <div class="flex gap-2 ml-4">
-            <button
-              @click="handleEdit"
-              class="px-4 py-2 bg-white/20 text-white rounded hover:bg-white/30 border border-white/30 transition-colors"
-            >
-              Edit
-            </button>
-            <button
-              @click="handleDelete"
-              class="px-4 py-2 bg-red-500/20 text-white rounded hover:bg-red-500/30 border border-red-400/40 transition-colors"
-            >
-              Delete
-            </button>
-          </div>
+          <ActionButtons @edit="handleEdit" @delete="handleDelete" />
         </div>
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-white/90">
@@ -280,23 +254,36 @@ onMounted(() => {
                 'px-2 py-1 rounded-full text-xs font-medium',
                 position.rejected
                   ? 'bg-red-100 text-red-800'
-                  : position.assessments && position.assessments.length > 0
-                    ? 'bg-orange-100 text-orange-800'
-                    : position.application
-                      ? 'bg-blue-100 text-blue-800'
-                      : 'bg-gray-100 text-gray-800',
+                  : position.offer
+                    ? 'bg-green-100 text-green-800'
+                    : position.assessments && position.assessments.length > 0
+                      ? 'bg-orange-100 text-orange-800'
+                      : position.application
+                        ? 'bg-blue-100 text-blue-800'
+                        : 'bg-gray-100 text-gray-800',
               ]"
             >
               {{
                 position.rejected
                   ? "Rejected"
-                  : position.assessments && position.assessments.length > 0
-                    ? "Interviewing"
-                    : position.application
-                      ? "Applied"
-                      : "Saved"
+                  : position.offer
+                    ? "Offer"
+                    : position.assessments && position.assessments.length > 0
+                      ? "Interviewing"
+                      : position.application
+                        ? "Applied"
+                        : "Saved"
               }}
             </span>
+          </div>
+          
+          <div v-if="!position.application && position.id" class="md:col-span-2">
+            <button
+              @click="navigateTo(`/add-application/${position.id}`)"
+              class="px-4 py-2 bg-blue-500/20 text-white rounded hover:bg-blue-500/30 border border-blue-400/40 transition-colors"
+            >
+              Add Application
+            </button>
           </div>
           
           <div v-if="position.applied_date">
@@ -355,7 +342,11 @@ onMounted(() => {
               </div>
               
               <!-- Event content -->
-              <div class="flex-1 glass-card bg-white/80 p-4 rounded-lg">
+              <div 
+                class="flex-1 glass-card bg-white/80 p-4 rounded-lg"
+                :class="(event.assessment || event.type === 'application') ? 'cursor-pointer hover:bg-white/90 transition-colors' : ''"
+                @click="event.assessment?.id ? navigateTo(`/assessment/${event.assessment.id}`) : (event.type === 'application' ? handleApplicationClick() : null)"
+              >
                 <div class="flex justify-between items-start mb-2">
                   <h3 class="text-lg font-semibold text-white/90">
                     {{ event.title }}
@@ -396,6 +387,14 @@ onMounted(() => {
       :is-open="editPositionModalOpen"
       @close="editPositionModalOpen = false"
       @saved="handlePositionModalSaved"
+    />
+
+    <EditApplicationModal
+      :application="position?.application || null"
+      :position="position"
+      :is-open="editApplicationModalOpen"
+      @close="editApplicationModalOpen = false"
+      @saved="handleApplicationModalSaved"
     />
 
     <DeleteConfirmationModal
