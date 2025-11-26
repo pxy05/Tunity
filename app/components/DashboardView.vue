@@ -52,7 +52,7 @@ const isAssessmentDatePast = (dateString: string | undefined): boolean => {
 // Helper function to flatten assessments from all positions
 const flattenAssessments = (): AssessmentWithPosition[] => {
   const allAssessments: AssessmentWithPosition[] = [];
-  
+
   localUserItems.value?.forEach((position) => {
     if (position.assessments && position.assessments.length > 0) {
       position.assessments.forEach((assessment) => {
@@ -76,14 +76,14 @@ const flattenAssessments = (): AssessmentWithPosition[] => {
       });
     }
   });
-  
+
   return allAssessments;
 };
 
 // Helper function to flatten offers from all positions
 const flattenOffers = (): OfferWithPosition[] => {
   const allOffers: OfferWithPosition[] = [];
-  
+
   localUserItems.value?.forEach((position) => {
     if (position.offer) {
       allOffers.push({
@@ -105,7 +105,7 @@ const flattenOffers = (): OfferWithPosition[] => {
       });
     }
   });
-  
+
   return allOffers;
 };
 
@@ -129,37 +129,37 @@ const positions = computed(() => {
 // Assessments computed - flatten and filter
 const assessments = computed(() => {
   const allAssessments = flattenAssessments();
-  
+
   // Filter based on completed status and date
   const filtered = allAssessments.filter((item) => {
     const assessment = item.assessment;
-    
+
     // If showCompleted is off, hide completed assessments
     if (!showCompleted.value && assessment.completed === true) {
       return false;
     }
-    
+
     // If showCompleted is off, hide past assessments
     if (!showCompleted.value && isAssessmentDatePast(assessment.date)) {
       return false;
     }
-    
+
     return true;
   });
-  
+
   // Sort by date (upcoming first, then by date descending)
   return filtered.sort((a, b) => {
     const dateA = a.assessment.date ? new Date(a.assessment.date).getTime() : 0;
     const dateB = b.assessment.date ? new Date(b.assessment.date).getTime() : 0;
-    
+
     // Upcoming assessments first
     const now = Date.now();
     const aIsUpcoming = dateA > now;
     const bIsUpcoming = dateB > now;
-    
+
     if (aIsUpcoming && !bIsUpcoming) return -1;
     if (!aIsUpcoming && bIsUpcoming) return 1;
-    
+
     // Then sort by date (earliest first for upcoming, latest first for past)
     if (aIsUpcoming && bIsUpcoming) {
       return dateA - dateB; // Earliest upcoming first
@@ -218,7 +218,12 @@ const handleDeleteOffer = (item: OfferWithPosition) => {
 
 // Confirm delete
 const confirmDelete = async () => {
-  if (!selectedPosition.value && !selectedAssessment.value && !selectedOffer.value) return;
+  if (
+    !selectedPosition.value &&
+    !selectedAssessment.value &&
+    !selectedOffer.value
+  )
+    return;
 
   const positionToDelete = selectedPosition.value;
   const assessmentToDelete = selectedAssessment.value;
@@ -274,10 +279,7 @@ const confirmDelete = async () => {
         await context.loadUserData();
         return;
       }
-    } else if (
-      itemType === "assessment" &&
-      assessmentToDelete?.assessment.id
-    ) {
+    } else if (itemType === "assessment" && assessmentToDelete?.assessment.id) {
       const result = await useApi.deleteAssessment(
         assessmentToDelete.assessment.id
       );
@@ -313,7 +315,10 @@ const confirmDelete = async () => {
 const deleteCompanyName = computed(() => {
   if (deleteItemType.value === "position" && selectedPosition.value) {
     return selectedPosition.value.company_name || "Unknown Company";
-  } else if (deleteItemType.value === "assessment" && selectedAssessment.value) {
+  } else if (
+    deleteItemType.value === "assessment" &&
+    selectedAssessment.value
+  ) {
     return selectedAssessment.value.position.company_name || "Unknown Company";
   } else if (deleteItemType.value === "offer" && selectedOffer.value) {
     return selectedOffer.value.position.company_name || "Unknown Company";
@@ -347,8 +352,8 @@ const addButtonRoute = computed(() => {
 </script>
 
 <template>
-  <div class="grid grid-cols-[20%_80%] h-[88vh] h-[88vh] gap-6 ml-4 mr-4 mt-6">
-    <div class="glass-card p-6 overflow-y-auto max-h-[88vh]">
+  <div class="grid grid-cols-[20%_80%] h-[86vh] gap-6 ml-4 mr-4 mt-6">
+    <div class="glass-card p-6 overflow-y-auto max-h-[85vh]">
       <h2
         class="text-2xl font-bold text-white/80 mb-6 drop-shadow-[0_2px_4px_rgba(0,0,0,0.2)]"
       >
@@ -452,18 +457,22 @@ const addButtonRoute = computed(() => {
     </div>
 
     <div
-      class="flex flex-col glass-card p-6 border-transparent mr-6 max-h-[88vh]"
+      class="flex flex-col glass-card p-6 border-transparent mr-6 max-h-[85vh]"
     >
       <div
-        v-if="!editPositionModalOpen && !editAssessmentModalOpen && !deleteModalOpen"
-        class="flex flex-col h-full max-h-full"
+        v-if="
+          !editPositionModalOpen && !editAssessmentModalOpen && !deleteModalOpen
+        "
+        class="flex flex-col h-full max-h-[85vh]"
       >
         <!-- Show Completed Toggle (only for Assessments view) -->
         <div
           v-if="selectedView === 'assessments'"
           class="flex items-center justify-between mb-4 pb-4 border-b border-black/20 flex-shrink-0"
         >
-          <span class="text-white/80 font-semibold">Show Completed Assessments</span>
+          <span class="text-white/80 font-semibold"
+            >Show Completed Assessments</span
+          >
           <label class="relative inline-flex items-center cursor-pointer">
             <input
               type="checkbox"
@@ -486,7 +495,9 @@ const addButtonRoute = computed(() => {
             {{ addButtonText }}
           </button>
         </div>
-        <div class="flex-1 min-h-0 max-h-full overflow-y-auto overflow-x-hidden">
+        <div
+          class="flex-1 min-h-0 max-h-[85vh] overflow-y-auto overflow-x-hidden"
+        >
           <div
             v-if="
               (selectedView === 'positions' && positions.length === 0) ||
@@ -495,12 +506,16 @@ const addButtonRoute = computed(() => {
             "
             class="text-center text-black/60 py-8"
           >
-            <p class="text-xl">
-              No {{ selectedView }} found
-            </p>
+            <p class="text-xl">No {{ selectedView }} found</p>
             <p class="text-sm mt-2">
               Start by adding your first
-              {{ selectedView === "positions" ? "position" : selectedView === "assessments" ? "assessment" : "offer" }}
+              {{
+                selectedView === "positions"
+                  ? "position"
+                  : selectedView === "assessments"
+                    ? "assessment"
+                    : "offer"
+              }}
             </p>
           </div>
 

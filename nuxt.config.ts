@@ -14,7 +14,7 @@ export default defineNuxtConfig({
   ],
 
   supabase: {
-    redirect: false,
+    redirect: false, // Disable automatic handling, we handle OAuth manually
   },
 
   app: {

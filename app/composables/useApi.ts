@@ -32,7 +32,7 @@ async function handleApiResponse<T>(
     const text = await response.text();
     data = text ? JSON.parse(text) : null;
   } catch (e) {
-    console.error("Failed to parse API response:", e);
+    console.error("[API] Failed to parse API response:", e);
     return {
       data: null,
       error: {
@@ -46,19 +46,28 @@ async function handleApiResponse<T>(
     // Handle error responses
     const error: ApiError = {
       error: data?.error || `HTTP ${response.status}: ${response.statusText}`,
-      code: data?.code || "DATABASE_ERROR",
+      code:
+        response.status === 404 ? "NOT_FOUND" : data?.code || "DATABASE_ERROR",
     };
+    console.log("[API] Error response:", {
+      status: response.status,
+      code: error.code,
+      message: error.error,
+    });
     return { data: null, error };
   }
 
   // Handle successful responses (200, 201, etc.)
+  console.log("[API] Success response:", { hasData: !!data });
   return { data: data as T, error: null };
 }
 
 // ==================== USER FUNCTIONS ====================
 
 async function getUser(): Promise<ApiResponse<User>> {
-  if (!useSupabaseUser().value?.id) {
+  const supabaseUser = useSupabaseUser();
+  if (!supabaseUser.value?.id) {
+    console.log("[API] getUser: No Supabase user ID");
     return {
       data: null,
       error: { error: "User not authenticated", code: "INVALID_INPUT" },
@@ -66,9 +75,11 @@ async function getUser(): Promise<ApiResponse<User>> {
   }
 
   const apiURL = getApiUrl();
-  const response = await fetch(
-    `${apiURL}/users/${useSupabaseUser().value?.id}`
-  );
+  const url = `${apiURL}/users/${supabaseUser.value.id}`;
+  console.log("[API] getUser: Fetching from:", url);
+
+  const response = await fetch(url);
+  console.log("[API] getUser: Response status:", response.status);
 
   return handleApiResponse<User>(response);
 }
@@ -96,7 +107,8 @@ async function createUser(
   }
 
   // Ensure first_name and last_name are not null/empty (API spec requires minLength: 1)
-  const firstName = firstname && firstname.trim() !== "" ? firstname.trim() : "";
+  const firstName =
+    firstname && firstname.trim() !== "" ? firstname.trim() : "";
   const lastName = lastname && lastname.trim() !== "" ? lastname.trim() : "";
 
   if (!firstName || firstName.length === 0) {
@@ -131,7 +143,9 @@ async function createUser(
 
 // ==================== POSITION FUNCTIONS ====================
 
-async function getPositions(user_id?: string): Promise<ApiResponse<Position[]>> {
+async function getPositions(
+  user_id?: string
+): Promise<ApiResponse<Position[]>> {
   const apiURL = getApiUrl();
   const response = await fetch(`${apiURL}/positions`);
 
@@ -566,17 +580,13 @@ async function getApplicationsWithPositions(
   user_id: string
 ): Promise<ApiResponse<PositionWithApplication[]>> {
   // Fetch positions, applications, assessments, and offers in parallel
-  const [
-    positionsResult,
-    applicationsResult,
-    assessmentsResult,
-    offersResult,
-  ] = await Promise.all([
-    getPositions(user_id),
-    getApplications(user_id),
-    getAssessments(),
-    getOffers(user_id),
-  ]);
+  const [positionsResult, applicationsResult, assessmentsResult, offersResult] =
+    await Promise.all([
+      getPositions(user_id),
+      getApplications(user_id),
+      getAssessments(),
+      getOffers(user_id),
+    ]);
 
   if (positionsResult.error) {
     return { data: null, error: positionsResult.error };
@@ -615,7 +625,8 @@ async function getApplicationsWithPositions(
       return {
         ...position,
         application,
-        assessments: positionAssessments.length > 0 ? positionAssessments : undefined,
+        assessments:
+          positionAssessments.length > 0 ? positionAssessments : undefined,
         offer: positionOffer,
       };
     }

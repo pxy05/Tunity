@@ -47,8 +47,8 @@ const handleSubmit = async (event: Event) => {
       return;
     }
 
-    // Success - navigate to confirm page (which will check for backend user)
-    navigateTo("/account/confirm");
+    // Success - navigate to home page (which will check for backend user)
+    navigateTo("/");
   } catch (error: any) {
     errorMessage.value =
       error.message || "An error occurred during registration";

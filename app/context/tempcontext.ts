@@ -1,7 +1,4 @@
-import type {
-  PositionWithApplication,
-  User,
-} from "@/assets/types/database";
+import type { PositionWithApplication, User } from "@/assets/types/database";
 import useApi from "~/composables/useApi";
 
 // const userItems = [
@@ -196,48 +193,98 @@ export default function useContext() {
   };
 
   const loadUserData = async () => {
-    console.log("[CONTEXT] loadUserData called, supabaseUser:", supabaseUser.value?.id || "null");
+    console.log(
+      "[CONTEXT] loadUserData called, supabaseUser:",
+      supabaseUser.value?.id || "null"
+    );
     if (!supabaseUser.value?.id) {
       console.log("[CONTEXT] No Supabase user ID, skipping load");
       loading.value = false;
+      user.value = null; // Explicitly set to null
+      userItems.value = null;
       return;
     }
 
     try {
       loading.value = true;
       console.log("[CONTEXT] Loading user data...");
+      const config = useRuntimeConfig();
+      const apiURL = config.public.tunityApiUrl;
+      console.log("[CONTEXT] API URL:", apiURL);
+      console.log(
+        "[CONTEXT] Fetching user from:",
+        `${apiURL}/users/${supabaseUser.value.id}`
+      );
 
       // Get user
       const userResult = await useApi.getUser();
+      console.log("[CONTEXT] getUser result:", {
+        hasData: !!userResult.data,
+        hasError: !!userResult.error,
+        errorCode: userResult.error?.code,
+        errorMessage: userResult.error?.error,
+      });
+
       if (userResult.error) {
         console.error("[CONTEXT] Error getting user:", userResult.error);
         error.value = userResult.error.error;
+
+        // Explicitly set user to null if 404 (user doesn't exist)
+        if (
+          userResult.error.code === "NOT_FOUND" ||
+          userResult.error.code === "DATABASE_ERROR"
+        ) {
+          console.log("[CONTEXT] User not found (404), setting user to null");
+          user.value = null;
+        } else {
+          // For other errors, also set to null
+          user.value = null;
+        }
+
         loading.value = false;
         return;
       }
+
       user.value = userResult.data;
-      console.log("[CONTEXT] User loaded:", user.value?.id, user.value?.username);
+      console.log(
+        "[CONTEXT] User loaded:",
+        user.value?.id,
+        user.value?.username
+      );
 
       // Get positions with applications
       const positionsResult = await useApi.getApplicationsWithPositions(
         supabaseUser.value.id
       );
       if (positionsResult.error) {
-        console.error("[CONTEXT] Error getting positions:", positionsResult.error);
+        console.error(
+          "[CONTEXT] Error getting positions:",
+          positionsResult.error
+        );
         error.value = positionsResult.error.error;
         loading.value = false;
         return;
       }
       userItems.value = positionsResult.data || [];
-      console.log("[CONTEXT] Positions loaded:", userItems.value?.length || 0, "items");
+      console.log(
+        "[CONTEXT] Positions loaded:",
+        userItems.value?.length || 0,
+        "items"
+      );
 
       error.value = null;
     } catch (e) {
       error.value = e instanceof Error ? e.message : "Failed to load data";
       console.error("[CONTEXT] Exception loading user data:", e);
+      user.value = null; // Explicitly set to null on error
     } finally {
       loading.value = false;
-      console.log("[CONTEXT] loadUserData complete, loading:", loading.value);
+      console.log(
+        "[CONTEXT] loadUserData complete, loading:",
+        loading.value,
+        "user:",
+        user.value?.id || "null"
+      );
     }
   };
 
@@ -247,7 +294,10 @@ export default function useContext() {
   watch(
     supabaseUser,
     (newSupabaseUser) => {
-      console.log("[CONTEXT] Supabase user watcher triggered:", newSupabaseUser ? `User: ${newSupabaseUser.id}` : "No user");
+      console.log(
+        "[CONTEXT] Supabase user watcher triggered:",
+        newSupabaseUser ? `User: ${newSupabaseUser.id}` : "No user"
+      );
       if (newSupabaseUser?.id) {
         console.log("[CONTEXT] User available, loading data...");
         loadUserData();

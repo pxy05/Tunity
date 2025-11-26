@@ -14,19 +14,32 @@ definePageMeta({
   layout: "default",
 });
 
-// Ensure context loads user data when page mounts if user is available
 onMounted(async () => {
-  console.log("[INDEX] Page mounted");
-  console.log("[INDEX] supabaseUser:", supabaseUser.value ? `${supabaseUser.value.id} (${supabaseUser.value.email})` : "null");
-  console.log("[INDEX] user:", user.value ? `${user.value.id} (${user.value.username})` : "null");
-  console.log("[INDEX] loading:", loading.value);
-  console.log("[INDEX] userItems:", userItems.value?.length || 0, "items");
-  
+  // Handle OAuth callback manually
+  if (process.client) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get("code");
+
+    if (code) {
+      const supabase = useSupabaseClient();
+
+      // Exchange code for session
+      const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+
+      if (error) {
+        console.error("OAuth exchange error:", error);
+        // Clean URL even on error
+        window.history.replaceState({}, "", window.location.pathname);
+      } else if (data.session) {
+        // Success - session created, clean URL
+        window.history.replaceState({}, "", window.location.pathname);
+      }
+    }
+  }
+
+  // Load user data if needed
   if (supabaseUser.value?.id && !user.value && !loading.value) {
-    console.log("[INDEX] Supabase user exists but context hasn't loaded, triggering manually...");
-    // If Supabase user exists but context hasn't loaded, trigger it manually
     await context.loadUserData();
-    console.log("[INDEX] After manual load - user:", user.value ? `${user.value.id}` : "null", "loading:", loading.value);
   }
 });
 </script>
