@@ -8,7 +8,7 @@ import PageLoader from "~/components/UI/PageLoader.vue";
 import PageError from "~/components/UI/PageError.vue";
 import ActionButtons from "~/components/UI/ActionButtons.vue";
 import PositionDetailsCard from "~/components/PositionDetailsCard.vue";
-import type { Offer, Position, Application, OfferWithPosition } from "~/assets/types/database";
+import type { Offer, Position, Application, OfferWithPosition, Assessment } from "~/assets/types/database";
 import backDashboard from "~/components/UI/backDashboard.vue";
 
 definePageMeta({
@@ -21,6 +21,7 @@ const offerId = route.params.id as string;
 const offer = ref<Offer | null>(null);
 const position = ref<Position | null>(null);
 const application = ref<Application | null>(null);
+const positionAssessments = ref<Assessment[]>([]);
 const loading = ref(true);
 const error = ref<string | null>(null);
 
@@ -53,11 +54,18 @@ const loadOfferData = async () => {
     
     // Fetch position if position_id exists
     if (offerResult.data.position_id) {
-      const positionResult = await useApi.getPosition(
-        offerResult.data.position_id
-      );
+      const [positionResult, assessmentsResult] = await Promise.all([
+        useApi.getPosition(offerResult.data.position_id),
+        useApi.getAssessments(),
+      ]);
+      
       if (positionResult.data) {
         position.value = positionResult.data;
+        
+        // Get assessments for this position
+        positionAssessments.value = assessmentsResult.data?.filter(
+          (assessment) => assessment.position_id === position.value?.id
+        ) || [];
         
         // Fetch application if position exists
         const applicationResult = await useApi.getApplications();
@@ -147,8 +155,26 @@ onMounted(() => {
         
         <div class="space-y-4 text-white/90">
           <div>
+            <span class="font-semibold">Position: </span>
+            <span class="text-lg">{{ position?.position_name || "Untitled Position" }}</span>
+          </div>
+          
+          <div>
+            <span class="font-semibold">Company: </span>
+            <span class="text-lg">{{ position?.company_name || "Unknown Company" }}</span>
+          </div>
+          
+          <div>
             <span class="font-semibold">Received Date & Time: </span>
             <span>{{ formatDateTime(offer.received_at) }}</span>
+          </div>
+          
+          <div class="flex items-center gap-2">
+            <span
+              class="px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800"
+            >
+              Offer Received
+            </span>
           </div>
         </div>
       </div>
@@ -158,7 +184,7 @@ onMounted(() => {
         v-if="position"
         :position="position"
         :application="application"
-        :position-assessments="[]"
+        :position-assessments="positionAssessments"
       />
     </div>
 

@@ -164,6 +164,48 @@ const handleApplicationModalSaved = async () => {
   await loadPositionData();
 };
 
+const handleToggleAssessmentCompleted = async (assessment: Assessment, event: Event) => {
+  event.stopPropagation();
+  
+  if (!assessment.id) return;
+  
+  const newCompleted = !assessment.completed;
+  
+  // Optimistic update
+  const originalCompleted = assessment.completed;
+  assessment.completed = newCompleted;
+  
+  try {
+    const assessmentData = {
+      position_id: assessment.position_id || undefined,
+      date: assessment.date ? new Date(assessment.date).toISOString() : undefined,
+      round: assessment.round || undefined,
+      assessment_type: assessment.assessment_type || undefined,
+      pre_notes: assessment.pre_notes || undefined,
+      post_notes: assessment.post_notes || undefined,
+      completed: newCompleted,
+    };
+    
+    const result = await useApi.updateAssessment(assessment.id, assessmentData);
+    
+    if (result.error) {
+      // Revert on error
+      assessment.completed = originalCompleted;
+      console.error("Error updating assessment:", result.error);
+      alert(`Failed to update assessment: ${result.error.error}`);
+      return;
+    }
+    
+    // Refresh data to sync with server
+    await loadPositionData();
+  } catch (e) {
+    // Revert on error
+    assessment.completed = originalCompleted;
+    console.error("Error toggling assessment completed status:", e);
+    alert("An error occurred while updating the assessment");
+  }
+};
+
 const confirmDelete = async () => {
   if (!position.value?.id) return;
 
@@ -344,8 +386,8 @@ onMounted(() => {
               <!-- Event content -->
               <div 
                 class="flex-1 glass-card bg-white/80 p-4 rounded-lg"
-                :class="(event.assessment || event.type === 'application') ? 'cursor-pointer hover:bg-white/90 transition-colors' : ''"
-                @click="event.assessment?.id ? navigateTo(`/assessment/${event.assessment.id}`) : (event.type === 'application' ? handleApplicationClick() : null)"
+                :class="(event.assessment || event.type === 'application' || event.offer) ? 'cursor-pointer hover:bg-white/90 transition-colors' : ''"
+                @click="event.assessment?.id ? navigateTo(`/assessment/${event.assessment.id}`) : (event.type === 'application' ? handleApplicationClick() : (event.offer?.id ? navigateTo(`/offer/${event.offer.id}`) : null))"
               >
                 <div class="flex justify-between items-start mb-2">
                   <h3 class="text-lg font-semibold text-white/90">
@@ -362,17 +404,19 @@ onMounted(() => {
                 
                 <div
                   v-if="event.assessment"
-                  class="flex gap-4 text-sm text-white/70"
+                  class="flex items-center gap-2 text-sm"
+                  @click.stop
                 >
-                  <span
-                    :class="[
-                      event.assessment.completed
-                        ? 'text-green-400'
-                        : 'text-orange-400',
-                    ]"
-                  >
-                    {{ event.assessment.completed ? "Completed" : "Uncompleted" }}
-                  </span>
+                  <label class="flex items-center gap-2 cursor-pointer">
+                    <span v-if="!event.assessment.completed" class="text-white/90">Completed?</span>
+                    <input
+                      type="checkbox"
+                      :checked="event.assessment.completed || false"
+                      @change="handleToggleAssessmentCompleted(event.assessment, $event)"
+                      class="w-4 h-4 cursor-pointer"
+                    />
+                    <span v-if="event.assessment.completed" class="text-green-400">Completed.</span>
+                  </label>
                 </div>
               </div>
             </div>

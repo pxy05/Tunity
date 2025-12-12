@@ -75,7 +75,7 @@ const submitPosition = async (event?: Event) => {
         ? new Date(appliedDate.value).toISOString()
         : undefined,
       company_notes: companyNotes.value || undefined,
-      rejected: rejected.value || undefined,
+      rejected: rejected.value,
     };
 
     const result = await useApi.updatePosition(props.position.id, positionData);

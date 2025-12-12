@@ -33,7 +33,7 @@ const buttonClasses = computed(() => {
       @click.stop="handleEdit"
       :class="[
         buttonClasses,
-        'bg-white/20 text-white rounded hover:bg-white/30 border border-white/30 transition-colors',
+        'bg-white/20 text-white rounded hover:bg-white/30 border border-white/30 transition-colors cursor-pointer',
       ]"
     >
       Edit
@@ -42,7 +42,7 @@ const buttonClasses = computed(() => {
       @click.stop="handleDelete"
       :class="[
         buttonClasses,
-        'bg-red-500/20 text-white rounded hover:bg-red-500/30 border border-red-400/40 transition-colors',
+        'bg-red-500/20 text-white rounded hover:bg-red-500/30 border border-red-400/40 transition-colors cursor-pointer',
       ]"
     >
       Delete

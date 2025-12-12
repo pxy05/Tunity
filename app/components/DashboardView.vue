@@ -35,7 +35,7 @@ const selectedOffer = ref<OfferWithPosition | null>(null);
 const deleteItemType = ref<"position" | "assessment" | "offer">("position");
 
 const ui_options = computed(() => {
-  return "ui-button-compress transition-all duration-300 glass-ui cursor-pointer w-full p-4 text-left rounded-lg font-bold text-lg";
+  return "ui-button-compress transition-all duration-300 glass-ui cursor-pointer w-full p-4 text-left text-lg font-bold";
 });
 
 // Helper function to check if assessment date is in the past
@@ -47,6 +47,61 @@ const isAssessmentDatePast = (dateString: string | undefined): boolean => {
   assessmentDate.setHours(0, 0, 0, 0);
   now.setHours(0, 0, 0, 0);
   return assessmentDate < now;
+};
+
+// Automatically update assessments with passed dates to completed
+const autoUpdatePassedAssessments = async () => {
+  if (!localUserItems.value) return;
+
+  const updates: Promise<void>[] = [];
+
+  localUserItems.value.forEach((position) => {
+    if (position.assessments && position.assessments.length > 0) {
+      position.assessments.forEach((assessment) => {
+        // Check if assessment date has passed and it's not already completed
+        if (
+          assessment.id &&
+          assessment.date &&
+          !assessment.completed &&
+          isAssessmentDatePast(assessment.date)
+        ) {
+          // Update assessment to completed
+          const updatePromise = useApi
+            .updateAssessment(assessment.id, {
+              position_id: assessment.position_id || undefined,
+              date: new Date(assessment.date).toISOString(),
+              round: assessment.round || undefined,
+              assessment_type: assessment.assessment_type || undefined,
+              pre_notes: assessment.pre_notes || undefined,
+              post_notes: assessment.post_notes || undefined,
+              completed: true,
+            })
+            .then((result) => {
+              if (result.error) {
+                console.error(
+                  `Error auto-updating assessment ${assessment.id}:`,
+                  result.error
+                );
+              }
+            })
+            .catch((e) => {
+              console.error(
+                `Error auto-updating assessment ${assessment.id}:`,
+                e
+              );
+            });
+
+          updates.push(updatePromise);
+        }
+      });
+    }
+  });
+
+  // Wait for all updates to complete, then refresh data
+  if (updates.length > 0) {
+    await Promise.all(updates);
+    await context.loadUserData();
+  }
 };
 
 // Helper function to flatten assessments from all positions
@@ -115,8 +170,12 @@ const localUserItems = ref<PositionWithApplication[]>([]);
 // Sync local state with props
 watch(
   () => props.userItems,
-  (newItems) => {
+  async (newItems) => {
     localUserItems.value = newItems || [];
+    // Automatically update assessments with passed dates
+    if (newItems && newItems.length > 0) {
+      await autoUpdatePassedAssessments();
+    }
   },
   { immediate: true, deep: true }
 );
@@ -363,21 +422,33 @@ const addButtonRoute = computed(() => {
       <div class="space-y-3">
         <button
           @click="selectedView = 'positions'"
-          :class="[ui_options]"
-          :style="
-            selectedView === 'positions'
+          :class="[
+            ui_options,
+            selectedView === 'positions' ? 'font-bold' : 'font-normal',
+          ]"
+          :style="{
+            ...(selectedView === 'positions'
               ? {
                   backgroundImage:
                     'linear-gradient(120deg, rgba(59, 130, 246, 1), rgba(0, 0, 0, 0.2))',
+                  borderRadius: '0px',
+                  fontFamily: 'Helvetica, Arial, sans-serif',
                 }
               : {
                   backgroundImage:
                     'linear-gradient(120deg, rgba(255, 255, 255, 0.3), rgba(0, 0, 0, 0.2))',
-                }
-          "
+                  borderRadius: '0px',
+                  fontFamily: 'Helvetica, Arial, sans-serif',
+                }),
+          }"
         >
           <div class="flex items-center justify-between">
-            <span>Positions</span>
+            <span
+              :class="
+                selectedView === 'positions' ? 'text-white' : 'text-white/80'
+              "
+              >Positions</span
+            >
             <span
               class="px-2 py-1 bg-blue-200 text-blue-800 rounded-full text-sm"
             >
@@ -388,21 +459,33 @@ const addButtonRoute = computed(() => {
 
         <button
           @click="selectedView = 'assessments'"
-          :class="[ui_options]"
-          :style="
-            selectedView === 'assessments'
+          :class="[
+            ui_options,
+            selectedView === 'assessments' ? 'font-bold' : 'font-normal',
+          ]"
+          :style="{
+            ...(selectedView === 'assessments'
               ? {
                   backgroundImage:
                     'linear-gradient(120deg, rgba(244, 99, 30, 1), rgba(0, 0, 0, 0.2))',
+                  borderRadius: '0px',
+                  fontFamily: 'Helvetica, Arial, sans-serif',
                 }
               : {
                   backgroundImage:
                     'linear-gradient(120deg, rgba(255, 255, 255, 0.3), rgba(0, 0, 0, 0.2))',
-                }
-          "
+                  borderRadius: '0px',
+                  fontFamily: 'Helvetica, Arial, sans-serif',
+                }),
+          }"
         >
           <div class="flex items-center justify-between">
-            <span>Assessments</span>
+            <span
+              :class="
+                selectedView === 'assessments' ? 'text-white' : 'text-white/80'
+              "
+              >Assessments</span
+            >
             <span
               class="px-2 py-1 bg-orange-200 text-orange-800 rounded-full text-sm"
             >
@@ -413,21 +496,33 @@ const addButtonRoute = computed(() => {
 
         <button
           @click="selectedView = 'offers'"
-          :class="[ui_options]"
-          :style="
-            selectedView === 'offers'
+          :class="[
+            ui_options,
+            selectedView === 'offers' ? 'font-bold' : 'font-normal',
+          ]"
+          :style="{
+            ...(selectedView === 'offers'
               ? {
                   backgroundImage:
                     'linear-gradient(120deg, rgba(34, 197, 94, 1), rgba(0, 0, 0, 0.2))',
+                  borderRadius: '0px',
+                  fontFamily: 'Helvetica, Arial, sans-serif',
                 }
               : {
                   backgroundImage:
                     'linear-gradient(120deg, rgba(255, 255, 255, 0.3), rgba(0, 0, 0, 0.2))',
-                }
-          "
+                  borderRadius: '0px',
+                  fontFamily: 'Helvetica, Arial, sans-serif',
+                }),
+          }"
         >
           <div class="flex items-center justify-between">
-            <span>Offers</span>
+            <span
+              :class="
+                selectedView === 'offers' ? 'text-white' : 'text-white/80'
+              "
+              >Offers</span
+            >
             <span
               class="px-2 py-1 bg-green-200 text-green-800 rounded-full text-sm"
             >
@@ -487,9 +582,10 @@ const addButtonRoute = computed(() => {
 
         <div
           class="hover:ml-10 transition-all duration-300 cursor-pointer glass flex justify-center items-center py-2 mb-4 flex-shrink-0"
+          style="border-radius: 0px; font-family: Helvetica, Arial, sans-serif"
         >
           <button
-            class="cursor-pointer flex-1"
+            class="cursor-pointer flex-1 font-bold"
             @click="navigateTo(addButtonRoute)"
           >
             {{ addButtonText }}
@@ -504,7 +600,7 @@ const addButtonRoute = computed(() => {
               (selectedView === 'assessments' && assessments.length === 0) ||
               (selectedView === 'offers' && offers.length === 0)
             "
-            class="text-center text-black/60 py-8"
+            class="text-center text-white/60 py-8"
           >
             <p class="text-xl">No {{ selectedView }} found</p>
             <p class="text-sm mt-2">

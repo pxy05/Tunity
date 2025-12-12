@@ -7,6 +7,7 @@ const props = defineProps<{
   stateManagementReference?: {
     addOfferShown: Ref<boolean | null>;
   };
+  preselectedPositionId?: string;
 }>();
 
 const context = useContext();
@@ -15,7 +16,7 @@ const fieldTitleStyle = "cursor-default text-white/80 flex-2 overflow-hidden";
 const fieldPlaceholder = "_____________________________________";
 
 // Offer fields
-const selectedPositionId = ref<string>("");
+const selectedPositionId = ref<string>(props.preselectedPositionId || "");
 const receivedAt = ref("");
 
 const error = ref<string | null>(null);
@@ -26,6 +27,13 @@ const availablePositions = computed(() => {
   if (!context.userItems?.value) return [];
   return context.userItems.value.filter((item) => item != null && item.id != null);
 });
+
+// Watch for preselected position changes
+watch(() => props.preselectedPositionId, (newId) => {
+  if (newId) {
+    selectedPositionId.value = newId;
+  }
+}, { immediate: true });
 
 const submitOffer = async (event?: Event) => {
   if (event) {
@@ -70,9 +78,15 @@ const submitOffer = async (event?: Event) => {
       return;
     }
 
-    // Success - refresh data and navigate back
+    // Success - refresh data
     await context.loadUserData();
-    navigateTo("/");
+    
+    // Close modal if used with stateManagementReference, otherwise navigate
+    if (props.stateManagementReference) {
+      props.stateManagementReference.addOfferShown.value = false;
+    } else {
+      navigateTo("/");
+    }
   } catch (e) {
     error.value =
       e instanceof Error ? e.message : "Failed to create offer";

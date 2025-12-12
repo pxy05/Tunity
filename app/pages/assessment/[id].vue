@@ -30,6 +30,9 @@ const error = ref<string | null>(null);
 const editAssessmentModalOpen = ref(false);
 const deleteModalOpen = ref(false);
 
+// Local state for optimistic update
+const completed = ref(false);
+
 const { formatDate, formatDateTime } = useDateFormat();
 
 const assessmentTitle = computed(() => {
@@ -37,6 +40,11 @@ const assessmentTitle = computed(() => {
   const typeLabel = getAssessmentTypeLabel(assessment.value?.assessment_type);
   return `Round ${round} - ${typeLabel}`;
 });
+
+// Sync completed with assessment
+watch(() => assessment.value?.completed, (newValue) => {
+  completed.value = newValue || false;
+}, { immediate: true });
 
 const loadAssessmentData = async () => {
   try {
@@ -111,6 +119,52 @@ const handleAssessmentModalSaved = async () => {
   await loadAssessmentData();
 };
 
+const handleToggleCompleted = async (event: Event) => {
+  event.preventDefault();
+  
+  if (!assessment.value?.id) return;
+  
+  const newCompleted = !completed.value;
+  
+  // Optimistic update
+  completed.value = newCompleted;
+  
+  try {
+    const assessmentData = {
+      position_id: assessment.value.position_id || undefined,
+      date: assessment.value.date ? new Date(assessment.value.date).toISOString() : undefined,
+      round: assessment.value.round || undefined,
+      assessment_type: assessment.value.assessment_type || undefined,
+      pre_notes: assessment.value.pre_notes || undefined,
+      post_notes: assessment.value.post_notes || undefined,
+      completed: newCompleted,
+    };
+    
+    const result = await useApi.updateAssessment(assessment.value.id, assessmentData);
+    
+    if (result.error) {
+      // Revert on error
+      completed.value = !newCompleted;
+      console.error("Error updating assessment:", result.error);
+      alert(`Failed to update assessment: ${result.error.error}`);
+      return;
+    }
+    
+    // Update local assessment state
+    if (assessment.value) {
+      assessment.value.completed = newCompleted;
+    }
+    
+    // Refresh data to sync with server
+    await loadAssessmentData();
+  } catch (e) {
+    // Revert on error
+    completed.value = !newCompleted;
+    console.error("Error toggling assessment completed status:", e);
+    alert("An error occurred while updating the assessment");
+  }
+};
+
 const confirmDelete = async () => {
   if (!assessment.value?.id) return;
 
@@ -173,17 +227,16 @@ onMounted(() => {
           
           <div class="flex items-center gap-2">
             <span class="font-semibold">Status: </span>
-            <button
-              @click="handleEdit"
-              :class="[
-                'px-3 py-1 rounded-full text-sm font-medium transition-colors',
-                assessment.completed
-                  ? 'bg-green-100 text-green-800 hover:bg-green-200'
-                  : 'bg-orange-100 text-orange-800 hover:bg-orange-200',
-              ]"
-            >
-              {{ assessment.completed ? "Completed" : "Uncompleted" }}
-            </button>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <span v-if="!completed" class="text-white/90">Completed?</span>
+              <input
+                type="checkbox"
+                :checked="completed"
+                @change="handleToggleCompleted"
+                class="w-5 h-5 cursor-pointer"
+              />
+              <span v-if="completed" class="text-green-400">Completed.</span>
+            </label>
           </div>
           
           <div v-if="assessment.pre_notes" class="mt-4">
